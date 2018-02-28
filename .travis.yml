@@ -1,0 +1,21 @@
+language: python
+sudo: required
+cache:
+  timeout: 3600
+  pip: true
+# cache: pip
+env:
+  - ANSIBLE_FORCE_COLOR=1
+matrix:
+  include:
+    - env: TOXENV=functional_2.3
+    - env: TOXENV=functional_stable
+    - env: TOXENV=linters
+  allow_failures:
+    - env: TOXENV=linters
+install:
+  - sudo pip install tox
+script:
+  - sudo tox
+notifications:
+  email: false

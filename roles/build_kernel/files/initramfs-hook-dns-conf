@@ -1,0 +1,44 @@
+#!/bin/sh
+# Copyright 2016, Logan Vig <logan2211@gmail.com>
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+#Copies the /etc/resolv.conf file into the initramfs during build
+
+PREREQ=""
+prereqs()
+{
+     echo "$PREREQ"
+}
+
+case $1 in
+prereqs)
+     prereqs
+     exit 0
+     ;;
+esac
+
+. /usr/share/initramfs-tools/hook-functions #provides copy_exec
+mkdir -p ${DESTDIR}/etc
+rm -f ${DESTDIR}/etc/resolv.conf                         #copy_exec won't overwrite an existing file
+rm -f ${DESTDIR}/etc/nsswitch.conf                         #copy_exec won't overwrite an existing file
+copy_exec /run/resolvconf/resolv.conf /etc/resolv.conf #Takes location in filesystem and location in initramfs as arguments
+copy_exec /etc/nsswitch.conf /etc/nsswitch.conf #Takes location in filesystem and location in initramfs as arguments
+
+# /lib/libnss_dns.so.*:a   DNS
+# /lib/libnss_files.so.*:  /etc/hosts and /etc/passwd
+# /lib/libnss_compat.so.*: /etc/passwd
+for _SHLIB in $(find /lib -name 'libnss_dns.so.*')
+do
+  copy_exec "${_SHLIB}"
+done

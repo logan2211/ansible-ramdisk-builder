@@ -1,0 +1,60 @@
+#!/bin/sh
+# Copyright 2016, Logan Vig <logan2211@gmail.com>
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+case $1 in
+  prereqs)
+    exit 0
+    ;;
+esac
+
+for x in $cmdline; do
+  case $x in
+  hostname=*)
+    hostname="${x#hostname=}"
+    ;;
+  esac
+done
+
+#. /lib/live/boot/9990-networking.sh
+#do_netsetup
+
+if [ -n "$hostname" ]; then
+  hostname "${hostname}"
+fi
+
+. /scripts/functions
+do_netconfig()
+{
+	#try for 2 minutes to get an IP
+	retry_nr=0
+        delay=120
+	log_begin_msg "network configuration loop max ${delay} seconds"
+        while [ ${retry_nr} -lt ${delay} ]; do
+                [ "$quiet" != "y" ] && log_begin_msg "Retrying network configuration"
+                /bin/sleep 1
+		configure_networking
+		if [[ -f /run/net-*.conf ]] || [[ -f /tmp/net-*.conf ]]; then retry_nr=${delay};
+                else retry_nr=$(( ${retry_nr} + 1 )); fi
+                [ "$quiet" != "y" ] && log_end_msg
+        done
+}
+
+
+#needed for DHCP
+modprobe af_packet
+do_netconfig || panic "Spawning shell.. failed to start network"
+
+echo 'Sleeping for a few seconds to allow the network interfaces to configure'
+sleep 5;

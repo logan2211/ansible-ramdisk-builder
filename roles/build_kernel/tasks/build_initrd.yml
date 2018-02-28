@@ -1,0 +1,70 @@
+---
+# Copyright 2018, Logan Vig <logan2211@gmail.com>
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+- name: Include all Intel microcode (disable cpu scan)
+  lineinfile:
+    dest: /etc/default/intel-microcode
+    state: present
+    regexp: "^#?IUCODE_TOOL_SCANCPUS=.*$"
+    line: "IUCODE_TOOL_SCANCPUS=no"
+  when:
+    - not image_intel_microcode_scancpu | bool
+  tags:
+    - image-intel-microcode
+
+- name: Set initrd compression
+  lineinfile:
+    dest: /etc/initramfs-tools/initramfs.conf
+    state: present
+    regexp: "^COMPRESS=.*$"
+    line: "COMPRESS={{ image_initrd_compression }}"
+  tags:
+    - image-initrd-compression
+
+- name: Configure initrd kernel modules
+  lineinfile:
+    dest: /etc/initramfs-tools/modules
+    state: present
+    line: "{{ item }}"
+  with_items: "{{ (image_initrd_kernel_modules + image_initrd_kernel_modules_extra) | unique | sort }}"
+  tags:
+    - image-initrd-kmod
+
+- name: Drop initramfs-tools hooks
+  copy:
+    src: "{{ item.src }}"
+    dest: "/etc/initramfs-tools/hooks/{{ item.name }}"
+    owner: root
+    group: root
+    mode: "0755"
+  with_items: "{{ image_initramfs_hooks }}"
+  tags:
+    - image-initrd-hooks
+
+- name: Drop initramfs scripts
+  copy:
+    src: "{{ item.name }}"
+    dest: "/etc/initramfs-tools/scripts/{{ item.dest | default(item.name) }}"
+    owner: root
+    group: root
+    mode: "0755"
+  with_items: "{{ image_initramfs_scripts }}"
+  tags:
+    - image-initrd-scripts
+
+- name: Build initrd image
+  command: update-initramfs -u
+  tags:
+    - image-initrd-update

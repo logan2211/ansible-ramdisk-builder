@@ -1,0 +1,81 @@
+#!/bin/sh
+# Copyright 2016, Logan Vig <logan2211@gmail.com>
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+set -e
+
+PREREQ=""
+prereqs()
+{
+     echo "$PREREQ"
+}
+
+case $1 in
+prereqs)
+     prereqs
+     exit 0
+     ;;
+esac
+
+. /usr/share/initramfs-tools/hook-functions
+
+copy_exec /sbin/mkfs.ext4 /sbin
+copy_exec /bin/mkfs.btrfs /bin
+copy_exec /sbin/mkfs.xfs /sbin
+copy_exec /sbin/zramctl /sbin
+
+# Filesystem: btrfs
+manual_add_modules btrfs
+
+# Filesystem: xfs
+manual_add_modules xfs
+
+# Filesystem: ext3/ext4
+manual_add_modules ext3
+manual_add_modules ext4
+
+# Filesystem: squashfs
+copy_exec /sbin/losetup
+manual_add_modules loop
+manual_add_modules squashfs
+manual_add_modules sqlzma
+manual_add_modules unlzma
+
+# Filesystem: aufs/overlay
+manual_add_modules aufs
+manual_add_modules overlay
+
+# Hardware: network
+auto_add_modules net
+
+# Program: udev
+if [ -x /sbin/udevadm ]
+then
+        [ "${QUIET}" ] || echo -n " udev"
+        copy_exec /sbin/udevadm
+fi
+
+# Program: wget
+if [ -x /usr/bin/wget ]
+then
+        [ "${QUIET}" ] || echo -n " wget"
+        copy_exec /usr/bin/wget /bin
+fi
+
+# Program: blockdev
+if [ -x /sbin/blockdev ]
+then
+        [ "${QUIET}" ] || echo -n " blockdev"
+        copy_exec /sbin/blockdev
+fi

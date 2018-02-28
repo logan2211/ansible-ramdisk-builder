@@ -1,0 +1,21 @@
+# {{ ansible_managed }}
+
+#do not install recommends or suggests
+APT::Install-Recommends "0";
+APT::Install-Suggests "0";
+
+#compress indexes during apt-get update
+Acquire::GzipIndexes "true";
+Acquire::CompressionTypes::Order:: "gz";
+
+Dir::Cache {
+	srcpkgcache "";
+	pkgcache "";
+}
+
+# Ideally, these would just be invoking "apt-get clean", but in our testing,
+# that ended up being cyclic and we got stuck on APT's lock, so we get this fun
+# creation that's essentially just "apt-get clean".
+DPkg::Post-Invoke { "rm -f /var/cache/apt/archives/*.deb /var/cache/apt/archives/partial/*.deb /var/cache/apt/*.bin || true"; };
+APT::Update::Post-Invoke { "rm -f /var/cache/apt/archives/*.deb /var/cache/apt/archives/partial/*.deb /var/cache/apt/*.bin || true"; };
+DSELECT::Clean "always";

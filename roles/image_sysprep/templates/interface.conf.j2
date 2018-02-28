@@ -1,0 +1,8 @@
+# {{ ansible_managed }}
+
+iface {{ item.name }} {{ item.proto }} {{ item.type }}
+{% if item.options is defined %}
+{% for opt in item.options | dictsort %}
+  {{ opt.0 }} {{ opt.1 }}
+{% endfor %}
+{% endif %}

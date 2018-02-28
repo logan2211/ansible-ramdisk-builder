@@ -1,0 +1,4 @@
+# {{ ansible_managed }}
+{% for i in image_ssh_keys %}
+{{ i.type | default('ssh-rsa') }} {{ i.key }} {{ i.name | default('') }}
+{% endfor %}

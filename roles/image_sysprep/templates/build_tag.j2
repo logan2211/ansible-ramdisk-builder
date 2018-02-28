@@ -1,0 +1,8 @@
+{{ ansible_managed }}
+
+Built at {{ ansible_date_time.date }} {{ ansible_date_time.time }} on {{ ansible_hostname }}
+
+{% if liveboot_git_fact is defined %}
+Git information for liveboot-bootstrap commit:
+{{ liveboot_git_fact.stdout }}
+{% endif %}
