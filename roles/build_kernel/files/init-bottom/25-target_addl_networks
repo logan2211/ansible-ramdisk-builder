@@ -1,0 +1,63 @@
+#!/bin/sh -e
+# Copyright 2016, Logan Vig <logan2211@gmail.com>
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+case $1 in
+  prereqs)
+    exit 0
+    ;;
+esac
+
+include() {
+	[ -f "$1" ] && . "$1"
+}
+
+#initramfs-tools functions
+include /scripts/functions
+
+for x in $cmdline; do
+        case $x in
+        netaddl=*)
+                        netaddl="${x#netaddl=}"
+                        ;;
+        esac
+done
+
+if [ -z "$netaddl" ]; then
+	exit 0
+fi
+
+url=$netaddl
+lfile="$(basename $url)"
+dest="/tmp"
+case "$url" in
+	tftp*)
+		ip="$(dirname $url | sed -e 's|tftp://||g' -e 's|/.*$||g')"
+		rfile="$(echo $url | sed -e "s|tftp://$ip||g")"
+		log_begin_msg "Trying tftp -g -b 10240 -r $rfile -l ${dest}/$lfile $ip"
+		tftp -g -b 10240 -r $rfile -l ${dest}/$lfile $ip || panic "rootfs tftp fetch failed"
+	;;
+	local*)
+		rfile="$(echo $url | sed -e "s|local://||g")"
+		cp /${rfile} ${dest}/${lfile}
+	;;
+	*)
+		log_begin_msg "Trying wget ${url} -O ${dest}/${lfile}"
+		wget "${url}" -O "${dest}/${lfile}" || panic "netaddl wget failed"
+	;;
+esac
+
+#we have an bash script at ${dest}/${lfile} to run, let it create all of the necessary network information.
+ROOTFS=/root
+include ${dest}/${lfile}

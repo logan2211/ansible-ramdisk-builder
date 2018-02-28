@@ -1,0 +1,174 @@
+---
+# Copyright 2018, Logan Vig <logan2211@gmail.com>
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+- name: Set image timezone
+  copy:
+    content: "{{ image_timezone }}"
+    dest: /etc/timezone
+  tags:
+    - image-prep-timezone
+
+- name: Drop fstab in image
+  template:
+    src: fstab.j2
+    dest: /etc/fstab
+    owner: root
+    group: root
+    mode: "0644"
+  with_items: "{{ image_fstab }}"
+  tags:
+    - image-fstab
+
+- name: Ensure mount targets exist as directories
+  file:
+    path: "{{ item.dest }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+  with_items: "{{ image_fstab }}"
+  tags:
+    - image-fstab
+
+- name: Create SSH directory for root
+  file:
+    path: '/root/.ssh'
+    state: directory
+    owner: root
+    group: root
+    mode: "0700"
+  when: image_ssh_keys
+  tags:
+    - image-ssh-keys
+
+- name: Create authorized_keys for root
+  template:
+    src: authorized_keys.j2
+    dest: /root/.ssh/authorized_keys
+    owner: root
+    group: root
+    mode: "0644"
+  when: image_ssh_keys
+  tags:
+    - image-ssh-keys
+
+- name: Set up interfaces file
+  template:
+    src: interface.conf.j2
+    dest: "/etc/network/interfaces.d/{{ item.name }}"
+    owner: root
+    group: root
+    mode: "0644"
+  with_items: "{{ image_network_interfaces }}"
+  tags:
+    - image-prep-network
+
+- name: Disable boot delays due to network init
+  replace:
+    dest: /etc/init/failsafe.conf
+    regexp: 'sleep'
+    replace: '#sleep'
+  when: "{{ ansible_distribution_release == 'trusty' }}"
+  tags:
+    - image-prep-init
+
+#TODO: uncomment this for ansible2 and remove limits.conf template
+#- name: Set fopen limits
+#  pam_limits:
+#    domain: "{{ item.domain }}"
+#    limit_type: "{{ item.limit_type }}"
+#    limit_item: "{{ item.limit_item }}"
+#    value: "{{ item.value }}"
+#  with_items: image_pam_limits
+#  tags:
+#    - image-pam-limits
+
+- name: Set limits.conf
+  lineinfile:
+    dest: /etc/security/limits.conf
+    state: present
+    line: "{{ item.domain }}\t{{ item.limit_type }}\t{{ item.limit_item }}\t{{ item.value }}"
+  with_items: "{{ image_pam_limits }}"
+  tags:
+    - image-pam-limits
+
+- name: Configure sysctl settings
+  sysctl:
+    name: "{{ item.key }}"
+    value: "{{ item.value }}"
+    state: present
+    reload: no
+    sysctl_set: no
+  with_items: "{{ image_kernel_options }}"
+  tags:
+    - image-sysctl
+
+- name: Disable syslog logging to disk
+  block:
+    - name: Ensure rsyslog config dir
+      file:
+        path: /etc/rsyslog.d
+        state: directory
+    - name: Drop rsyslog disable config
+      template:
+        src: "rsyslog-disable.conf.j2"
+        dest: "/etc/rsyslog.d/49-disable-logging.conf"
+        owner: root
+        group: root
+        mode: "0644"
+  when: image_disable_local_syslog | bool
+  tags:
+    - image-syslog-disable
+
+- name: Set manual start services
+  copy:
+    content: "manual\n"
+    dest: "/etc/init/{{ item }}.override"
+    owner: root
+    group: root
+    mode: "0644"
+  with_items: "{{ image_manual_start_services }}"
+  tags:
+    - image-services-manual
+
+- name: Set up system users
+  user:
+    name: "{{ item.username }}"
+    append: "{{ item.append | default(omit) }}"
+    group: "{{ item.group | default(omit) }}"
+    groups: "{{ item.groups | default(omit) }}"
+    state: "{{ item.state | default(omit) }}"
+    home: "{{ item.home | default(omit) }}"
+    move_home: "{{ item.move_home | default(omit) }}"
+    shell: "{{ item.shell | default(omit) }}"
+    update_password: "{{ item.update_password | default(omit) }}"
+    password: "{{ item.password | default(omit) }}"
+  with_items: "{{ image_users }}"
+  tags:
+    - image-users-setup
+
+- include: custom_scripts.yml
+  tags:
+    - image-custom
+
+- name: Check if apparmor is installed in the image
+  command: dpkg -l apparmor
+  register: apparmor_installed
+  failed_when: false
+
+- include: apparmor.yml
+  when: "{{ apparmor_installed.rc == 0 }}"
+  tags:
+    - image-apparmor

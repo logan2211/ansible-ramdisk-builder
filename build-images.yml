@@ -1,0 +1,120 @@
+---
+# Copyright 2018, Logan Vig <logan2211@gmail.com>
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+- name: Bootstrap images
+  hosts: "{{ liveboot_images_group | default('liveboot_images') }}"
+  gather_facts: no
+  pre_tasks:
+    - name: Ensure root user
+      local_action:
+        module: shell
+        args: test `id -u` -eq 0
+      run_once: true
+    - name: Install image build packages
+      local_action:
+        module: apt
+        update_cache: yes
+        name: "{{ item }}"
+        state: present
+      with_items:
+        - squashfs-tools
+        - debootstrap
+      run_once: true
+      tags:
+        - image-bootstrap-packages
+  roles:
+    - role: bootstrap_image
+      ansible_connection: local
+      tags:
+        - image-bootstrap
+
+- name: Prepare images
+  hosts: "{{ liveboot_images_group | default('liveboot_images') }}"
+  gather_facts: yes
+  pre_tasks:
+    - name: Prevent services from starting upon install in chroot
+      copy:
+        content: "exit 101\n"
+        dest: /usr/sbin/policy-rc.d
+        owner: root
+        group: root
+        mode: "0755"
+      tags:
+        - image-chroot-services-stop
+    - name: Prevent upstart services from starting in chroot
+      command: dpkg-divert --local --rename --add {{ item }}
+      changed_when: false
+      with_items:
+        - /sbin/initctl
+        - /usr/sbin/service
+      tags:
+        - image-chroot-services-stop
+    - name: Link /bin/true to initctl as fake upstart
+      file:
+        src: /bin/true
+        dest: "{{ item }}"
+        owner: root
+        group: root
+        state: link
+      with_items:
+        - /sbin/initctl
+        - /usr/sbin/service
+      tags:
+        - image-chroot-services-stop
+  roles:
+    - role: resolvconf
+      tags:
+        - resolvconf
+    - { role: "apt_liveconfig", tags: [ 'apt-liveconfig' ] }
+    - { role: "image_sysprep", tags: [ 'image-sysprep' ] }
+    - { role: "build_kernel", tags: [ 'image-kernel' ] }
+    - role: apt_liveconfig
+      image_apt_taskset:
+        - upgrade
+      apt_cache_timeout: 10
+    - { role: "image_cleanup", tags: [ 'image-cleanup' ] }
+  post_tasks:
+    - name: Stop preventing services from starting upon install
+      file:
+        path: /usr/sbin/policy-rc.d
+        state: absent
+      tags:
+        - image-chroot-services-start
+    - name: Remove fake initctl link to /bin/true
+      file:
+        path: "{{ item }}"
+        state: absent
+      with_items:
+        - /sbin/initctl
+        - /usr/sbin/service
+      tags:
+        - image-chroot-services-start
+    - name: Move inictl back to its normal location
+      command: dpkg-divert --local --rename --remove {{ item }}
+      changed_when: false
+      with_items:
+        - /sbin/initctl
+        - /usr/sbin/service
+      tags:
+        - image-chroot-services-start
+
+- name: Package images
+  hosts: "{{ liveboot_images_group | default('liveboot_images') }}"
+  gather_facts: no
+  roles:
+    - role: pack_squashfs
+      ansible_connection: local
+      tags:
+        - image-packer

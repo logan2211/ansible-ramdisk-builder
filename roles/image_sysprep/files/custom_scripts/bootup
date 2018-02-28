@@ -1,0 +1,25 @@
+#!/bin/sh
+
+MD=md-name-`hostname -s`:0
+
+if [ -b /dev/disk/by-id/$MD ]; then
+  FS=$(blkid -o value -s TYPE /dev/disk/by-id/$MD)
+  case "$FS" in
+    xfs)
+      MOUNTOPTS="noatime,largeio,inode64,swalloc"
+      MOUNT="mount -t xfs -o ${MOUNTOPTS} /dev/disk/by-id/$MD /mnt/localstore"
+    ;;
+    *)
+      MOUNTOPTS="defaults"
+      MOUNT="mount /dev/disk/by-id/$MD /mnt/localstore"
+  esac
+  if [ ! -d /mnt/localstore ]; then
+    mkdir -p /mnt/localstore
+  fi
+  $MOUNT
+
+  if [ -d /mnt/localstore/nova ]; then
+    mkdir -p /var/lib/nova
+    mount -o bind /mnt/localstore/nova /var/lib/nova
+  fi
+fi

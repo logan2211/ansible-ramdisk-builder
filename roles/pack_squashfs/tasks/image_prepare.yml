@@ -1,0 +1,60 @@
+---
+# Copyright 2018, Logan Vig <logan2211@gmail.com>
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+- name: Unmount proc, dev, sys from bootstrap
+  local_action:
+    module: command
+    args: umount "{{ item }}"
+  register: unmount
+  failed_when: "'not found' not in unmount.stderr and 'not mounted' not in unmount.stderr and unmount.rc != 0"
+  changed_when: "unmount.rc == 0"
+  with_items:
+    - "{{ image_dir }}/proc"
+    - "{{ image_dir }}/sys"
+    - "{{ image_dir }}/dev"
+  tags:
+    - unmount-system
+    - unmount-system-post
+
+- name: Ensure output dir exists
+  file:
+    path: "{{ image_packer_output }}"
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: Remove stale squashfs excludes
+  file:
+    path: "{{ image_packer_excludes }}"
+    state: absent
+
+- name: Build squashfs excludes file
+  lineinfile:
+    dest: "{{ image_packer_excludes }}"
+    line: "{{ item }}"
+    state: present
+    create: yes
+  with_items: "{{ image_packer_exclude_files }}"
+
+- name: Add locales to squashfs excludes
+  lineinfile:
+    dest: "{{ image_packer_excludes }}"
+    line: "{{ item | relpath(image_dir ~ '/') }}"
+    state: present
+    create: yes
+  when: item | basename not in image_packer_locale_include
+  with_fileglob:
+    - "{{ image_dir }}/usr/share/i18n/locales/*"

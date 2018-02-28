@@ -1,0 +1,20 @@
+#!/bin/sh
+#Copies the /lib/firmware/cxgb4/t5-config.txt file into the initramfs during build
+
+PREREQ=""
+prereqs()
+{
+     echo "$PREREQ"
+}
+
+case $1 in
+prereqs)
+     prereqs
+     exit 0
+     ;;
+esac
+
+. /usr/share/initramfs-tools/hook-functions #provides copy_exec
+mkdir -p ${DESTDIR}/lib/firmware/cxgb4
+rm -f ${DESTDIR}/lib/firmware/cxgb4/t5-config.txt                         #copy_exec won't overwrite an existing file
+copy_exec /lib/firmware/cxgb4/t5-config.txt /lib/firmware/cxgb4/t5-config.txt #Takes location in filesystem and location in initramfs as arguments
