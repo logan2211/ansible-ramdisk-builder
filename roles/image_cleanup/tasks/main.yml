@@ -60,3 +60,7 @@
     mode: "0755"
   tags:
     - image-cleanup-files
+
+- include_tasks: enable_autostart.yml
+  when:
+    - 'image_disable_service_autostart | bool'

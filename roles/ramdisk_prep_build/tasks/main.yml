@@ -13,11 +13,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-image_cleanup_packages: "{{ image_cleanup_kernel_packages }}"
-image_cleanup_kernel_packages:
-  - 'linux-headers-*'
-  - 'linux-firmware'
-  - 'intel-microcode'
-# - 'linux-image-*' #major space savings but needs more testing.
+- import_tasks: prepare.yml
 
-image_disable_service_autostart: yes
+- import_role:
+    name: bootstrap_image
+  vars:
+    ansible_connection: local
+  tags:
+    - image-bootstrap
