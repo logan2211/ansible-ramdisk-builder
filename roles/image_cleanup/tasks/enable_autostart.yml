@@ -13,11 +13,28 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-image_cleanup_packages: "{{ image_cleanup_kernel_packages }}"
-image_cleanup_kernel_packages:
-  - 'linux-headers-*'
-  - 'linux-firmware'
-  - 'intel-microcode'
-# - 'linux-image-*' #major space savings but needs more testing.
+- name: Stop preventing services from starting upon install
+  file:
+    path: /usr/sbin/policy-rc.d
+    state: absent
+  tags:
+    - image-chroot-services-start
 
-image_disable_service_autostart: yes
+- name: Remove fake initctl link to /bin/true
+  file:
+    path: "{{ item }}"
+    state: absent
+  with_items:
+    - /sbin/initctl
+    - /usr/sbin/service
+  tags:
+    - image-chroot-services-start
+
+- name: Move inictl back to its normal location
+  command: dpkg-divert --local --rename --remove {{ item }}
+  changed_when: false
+  with_items:
+    - /sbin/initctl
+    - /usr/sbin/service
+  tags:
+    - image-chroot-services-start

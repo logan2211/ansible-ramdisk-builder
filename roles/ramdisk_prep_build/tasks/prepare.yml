@@ -13,11 +13,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-image_cleanup_packages: "{{ image_cleanup_kernel_packages }}"
-image_cleanup_kernel_packages:
-  - 'linux-headers-*'
-  - 'linux-firmware'
-  - 'intel-microcode'
-# - 'linux-image-*' #major space savings but needs more testing.
+# Prepare the host to build images
+- name: Ensure root user
+  local_action:
+    module: shell
+    args: test `id -u` -eq 0
+  run_once: true
 
-image_disable_service_autostart: yes
+- name: Install image build packages
+  local_action:
+    module: apt
+    update_cache: yes
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - squashfs-tools
+    - debootstrap
+  run_once: true
+  tags:
+    - image-bootstrap-packages
