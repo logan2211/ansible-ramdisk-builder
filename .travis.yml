@@ -9,6 +9,7 @@ env:
 matrix:
   include:
     - env: TOXENV=functional_2.3
+    - env: TOXENV=functional_2.4
     - env: TOXENV=functional_stable
     - env: TOXENV=linters
   allow_failures:
