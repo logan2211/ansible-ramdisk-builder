@@ -8,7 +8,7 @@ env:
   - ANSIBLE_FORCE_COLOR=1
 matrix:
   include:
-    - env: TOXENV=functional_2.4
+    - env: TOXENV=functional_2.5
     - env: TOXENV=functional_stable
     - env: TOXENV=linters
   allow_failures:
