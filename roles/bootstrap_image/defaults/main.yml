@@ -30,7 +30,6 @@ image_bootstrap_include_packages:
   - python-apt
   - sudo
   - nano
-  - resolvconf
   - apt-transport-https
   - plymouth-disabler
 

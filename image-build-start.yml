@@ -20,7 +20,6 @@
     _image_build_bootstrap_roles:
       - ramdisk_prep_build
     _image_build_prep_roles:
-      - resolvconf
       - apt_liveconfig
       - image_sysprep
   tasks:
