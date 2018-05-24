@@ -18,6 +18,10 @@
   connection: local
   user: root
   tasks:
+    - name: End the play if no role dependencies are defined
+      meta: end_play
+      when:
+        - required_roles is none or required_roles == ''
     - name: Remove target directory if required
       shell: |
         if [[ ! -d "{{ item.path | default(role_path_default) }}/{{ item.name | default(item.src | basename) }}/.git" ]]; then

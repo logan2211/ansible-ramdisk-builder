@@ -16,7 +16,3 @@
 ansible_host: "{{ image_packer_output }}/{{ inventory_hostname }}"
 ansible_connection: chroot
 image_packer_output: /var/cache/ramdisk-builder
-
-resolvconf_resolver_ips:
-  - 8.8.8.8
-  - 8.8.4.4
