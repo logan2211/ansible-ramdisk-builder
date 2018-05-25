@@ -13,33 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- name: Ensure unmounted proc, dev, sys in bootstrap
-  command: umount "{{ item }}"
-  register: unmount
-  failed_when: "'not found' not in unmount.stderr and 'not mounted' not in unmount.stderr and unmount.rc != 0"
-  changed_when: "unmount.rc == 0"
-  with_items:
-    - "{{ image_dir }}/proc"
-    - "{{ image_dir }}/sys"
-    - "{{ image_dir }}/dev"
-  tags:
-    - unmount-system-pre
-
-- name: Delete stale image
-  file:
-    path: "{{ image_dir }}"
-    state: absent
-  tags:
-    - image-delete-stale
-
-- name: Prep image directory
-  file:
-    path: "{{ image_dir }}"
-    state: directory
-    mode: 0755
-  tags:
-    - image-destination-create
-
 - name: Bootstrap image
   command: debootstrap
     --arch="{{ image_ubuntu_arch }}"
