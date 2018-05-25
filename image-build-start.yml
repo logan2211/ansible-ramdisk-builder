@@ -19,6 +19,7 @@
   vars:
     _image_build_bootstrap_roles:
       - ramdisk_prep_build
+      - bootstrap_image
     _image_build_prep_roles:
       - apt_liveconfig
       - image_sysprep

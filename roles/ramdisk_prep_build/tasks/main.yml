@@ -13,11 +13,47 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- import_tasks: prepare.yml
+# Prepare the host to build images
+- name: Ensure root user
+  shell: test `id -u` -eq 0
+  run_once: true
 
-- import_role:
-    name: bootstrap_image
-  vars:
-    ansible_connection: local
+- name: Install image build packages
+  apt:
+    update_cache: yes
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - squashfs-tools
+    - debootstrap
+  run_once: true
   tags:
-    - image-bootstrap
+    - image-bootstrap-packages
+
+# Reset the image build (delete old image, create build directory)
+- name: Ensure unmounted proc, dev, sys in bootstrap
+  command: umount "{{ item }}"
+  register: unmount
+  failed_when: "'not found' not in unmount.stderr and 'not mounted' not in unmount.stderr and unmount.rc != 0"
+  changed_when: "unmount.rc == 0"
+  with_items:
+    - "{{ image_dir }}/proc"
+    - "{{ image_dir }}/sys"
+    - "{{ image_dir }}/dev"
+  tags:
+    - unmount-system-pre
+
+- name: Delete stale image
+  file:
+    path: "{{ image_dir }}"
+    state: absent
+  tags:
+    - image-delete-stale
+
+- name: Prep image directory
+  file:
+    path: "{{ image_dir }}"
+    state: directory
+    mode: 0755
+  tags:
+    - image-destination-create
