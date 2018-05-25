@@ -84,7 +84,7 @@
   vars:
     ansible_python_interpreter: "/usr/bin/python"
     required_roles: "{{ lookup('file', role_file) | from_yaml }}"
-    role_file: 'ansible-role-requirements.yml'
-    role_path_default: 'ephemeral_roles/'
+    role_file: "{{ playbook_dir }}/ansible-role-requirements.yml"
+    role_path_default: "{{ playbook_dir }}/ephemeral_roles/"
     git_clone_retries: 2
     git_clone_retry_delay: 5
