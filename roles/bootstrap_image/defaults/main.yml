@@ -24,6 +24,9 @@ image_debootstrap_components:
   - multiverse
   - restricted
 image_bootstrap_include_packages:
+  - init
+  - systemd
+  - dbus
   - openssh-server
   - python-minimal
   - python3-minimal
