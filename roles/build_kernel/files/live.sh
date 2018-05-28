@@ -144,7 +144,7 @@ mountroot () {
 
   # Prepare and mount the overlay
   mkdir /live/ephemeral/work /live/ephemeral/rw
-  mount -t overlayfs -o noatime,lowerdir=/live/base,upperdir=/live/ephemeral/rw,workdir=/live/ephemeral/work overlay ${rootmnt}
+  mount -t overlay -o noatime,lowerdir=/live/base,upperdir=/live/ephemeral/rw,workdir=/live/ephemeral/work overlay ${rootmnt}
   for i in medium base ephemeral; do
     mkdir -p "${rootmnt}/live/${i}"
     mount -o move "/live/${i}" "${rootmnt}/live/${i}"
