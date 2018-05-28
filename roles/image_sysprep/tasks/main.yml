@@ -166,7 +166,18 @@
   tags:
     - image-users-setup
 
-- include: custom_scripts.yml
+- name: Configure custom scripts bootup service unit
+  include_role:
+    name: systemd_service
+  vars:
+    systemd_service_restart_changed: no
+    systemd_services:
+      - service_name: ramdisk_bootup
+        systemd_Restart: no
+        execstarts: "{{ image_bootup_scripts }}"
+        config_overrides:
+          Service:
+            RemainAfterExit: yes
   tags:
     - image-custom
 

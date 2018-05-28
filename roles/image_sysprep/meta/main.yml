@@ -26,4 +26,5 @@ galaxy_info:
     - squashfs
     - ramdisk
     - liveboot
-dependencies: []
+dependencies:
+  - config_template
