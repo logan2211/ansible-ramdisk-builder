@@ -37,6 +37,15 @@
   tags:
     - localepurge-install
 
-- include: "localepurge_config_{{ ansible_distribution_release }}.yml"
+- name: Add selected locales to locale.gen
+  lineinfile:
+    dest: /etc/locale.gen
+    line: "{{ item.name }} {{ item.encoding }}"
+  with_items: "{{ image_locales }}"
   tags:
-    - localepurge-config
+    - locale-configuration
+
+- name: Compile system locales
+  command: locale-gen
+  tags:
+    - locale-configuration
