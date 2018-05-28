@@ -143,6 +143,13 @@
   tags:
     - image-services-manual
 
+- name: Enable systemd services
+  systemd:
+    name: "{{ item }}"
+    enabled: yes
+  with_items:
+    - systemd-networkd
+
 - name: Set up system users
   user:
     name: "{{ item.username }}"

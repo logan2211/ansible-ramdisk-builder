@@ -38,18 +38,22 @@ for i in /run/net-*.conf; do
 	#remove .conf extension
 	ifname=${base_file%.*}
 
-	cat >> /root/etc/network/interfaces.d/"$ifname" << EOF
-auto ${ifname}
-iface ${ifname} inet dhcp
+	cat >> /root/etc/systemd/network/"$ifname".network << EOF
+[Match]
+Name=${ifname}
+[Network]
+DHCP=ipv4
 EOF
 done
 
 #add additional dhcp interfaces from "dhcpints" command line option
 IFS=","
 for ifname in $dhcpints; do
-  cat >> /root/etc/network/interfaces.d/"$ifname" << EOF
-auto ${ifname}
-iface ${ifname} inet dhcp
+  cat >> /root/etc/systemd/network/"$ifname".network << EOF
+[Match]
+Name=${ifname}
+[Network]
+DHCP=ipv4
 EOF
 done
 
