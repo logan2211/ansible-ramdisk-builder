@@ -14,41 +14,45 @@
 # limitations under the License.
 
 case $1 in
-  prereqs)
-    exit 0
+    prereqs)
+        exit 0
     ;;
 esac
 
 for x in $cmdline; do
-  case $x in
-  hostname=*)
-    hostname="${x#hostname=}"
-    ;;
-  esac
+    case $x in
+        hostname=*)
+            hostname="${x#hostname=}"
+        ;;
+    esac
 done
 
-#. /lib/live/boot/9990-networking.sh
-#do_netsetup
-
 if [ -n "$hostname" ]; then
-  hostname "${hostname}"
+      echo "Hostname provided, setting to ${hostname}"
+      hostname "${hostname}"
+    elif [ -n "${BOOTIF}" ]; then
+      # strip off the leading "01-", which isn't part of the mac
+      # address
+      hostbootif="${BOOTIF#*-}"
+      echo "Hostname not provided, setting hostname to PXE MAC: ${hostbootif}"
+      hostname "${hostbootif}"
 fi
 
 . /scripts/functions
 do_netconfig()
 {
-	#try for 2 minutes to get an IP
-	retry_nr=0
-        delay=120
-	log_begin_msg "network configuration loop max ${delay} seconds"
-        while [ ${retry_nr} -lt ${delay} ]; do
-                [ "$quiet" != "y" ] && log_begin_msg "Retrying network configuration"
-                /bin/sleep 1
-		configure_networking
-		if [[ -f /run/net-*.conf ]] || [[ -f /tmp/net-*.conf ]]; then retry_nr=${delay};
-                else retry_nr=$(( ${retry_nr} + 1 )); fi
-                [ "$quiet" != "y" ] && log_end_msg
-        done
+    #try for 2 minutes to get an IP
+    retry_nr=0
+    delay=120
+    log_begin_msg "network configuration loop max ${delay} seconds"
+    while [ ${retry_nr} -lt ${delay} ]; do
+        [ "$quiet" != "y" ] && log_begin_msg "Retrying network configuration"
+        /bin/sleep 1
+        configure_networking
+        if [[ -f /run/net-*.conf ]] || [[ -f /tmp/net-*.conf ]]; then retry_nr=${delay};
+    else retry_nr=$(( ${retry_nr} + 1 )); fi
+        [ "$quiet" != "y" ] && log_end_msg
+    done
 }
 
 
