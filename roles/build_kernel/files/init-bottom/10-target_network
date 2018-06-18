@@ -43,6 +43,8 @@ for i in /run/net-*.conf; do
 Name=${ifname}
 [Network]
 DHCP=ipv4
+[DHCP]
+ClientIdentifier=mac
 EOF
 done
 
@@ -54,6 +56,8 @@ for ifname in $dhcpints; do
 Name=${ifname}
 [Network]
 DHCP=ipv4
+[DHCP]
+ClientIdentifier=mac
 EOF
 done
 
