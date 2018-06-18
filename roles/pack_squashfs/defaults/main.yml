@@ -24,6 +24,8 @@ image_packer_exclude_files:
   - boot/*
   - initrd.img
   - vmlinuz
+  - etc/machine-id
+  - var/lib/dbus/machine-id
   - usr/share/doc/*
   - usr/share/man/*
   - usr/share/info/*
