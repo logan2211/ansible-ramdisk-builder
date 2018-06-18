@@ -8,12 +8,25 @@ cache:
 env:
   - ANSIBLE_FORCE_COLOR=1
 matrix:
+  fast_finish: true
   include:
-    - env: TOXENV=functional_2.5
-    - env: TOXENV=functional_stable
-    - env: TOXENV=linters
+    - env:
+        TOXENV: functional_2.5
+        ansible_inventory: inventory_xenial
+    - env:
+        TOXENV: functional_2.5
+        ansible_inventory: inventory_bionic
+    - env:
+        TOXENV: functional_stable
+        ansible_inventory: inventory_xenial
+    - env:
+        TOXENV: functional_stable
+        ansible_inventory: inventory_bionic
+    - env:
+        TOXENV: linters
   allow_failures:
-    - env: TOXENV=linters
+    - env:
+        TOXENV: linters
 install:
   - sudo pip install tox
 script:

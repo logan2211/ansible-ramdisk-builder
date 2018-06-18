@@ -2,4 +2,4 @@
 localhost ansible_connection=local ansible_become=True
 
 [liveboot_images]
-ubuntu1604
+ubuntu1804 image_ubuntu_release=bionic
