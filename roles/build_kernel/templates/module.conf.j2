@@ -1,2 +1,2 @@
 # {{ ansible_managed }}
-options {{ item.key }} {% for inner_key, inner_value in item.value.iteritems() %}{{ inner_key }}={{ inner_value }}{% if not loop.last %} {% endif %}{% endfor %}
+options {{ item.key }} {% for inner_key, inner_value in item.value.items() %}{{ inner_key }}={{ inner_value }}{% if not loop.last %} {% endif %}{% endfor %}
