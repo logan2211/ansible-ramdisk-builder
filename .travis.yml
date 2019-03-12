@@ -23,6 +23,9 @@ matrix:
         TOXENV: functional_stable
         ansible_inventory: inventory_bionic
     - env:
+        TOXENV: functional_stable_py3
+        ansible_inventory: inventory_bionic
+    - env:
         TOXENV: linters
   allow_failures:
     - env:
