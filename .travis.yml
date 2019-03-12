@@ -11,10 +11,10 @@ matrix:
   fast_finish: true
   include:
     - env:
-        TOXENV: functional_2.5
+        TOXENV: functional_2.6
         ansible_inventory: inventory_xenial
     - env:
-        TOXENV: functional_2.5
+        TOXENV: functional_2.6
         ansible_inventory: inventory_bionic
     - env:
         TOXENV: functional_stable
