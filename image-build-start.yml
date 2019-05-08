@@ -21,6 +21,7 @@
       - ramdisk_prep_build
       - bootstrap_image
     _image_build_prep_roles:
+      - prevent_service_autostart
       - apt_liveconfig
       - image_sysprep
   tasks:

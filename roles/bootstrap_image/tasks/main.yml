@@ -38,7 +38,3 @@
   command: mount -o bind /dev "{{ image_dir }}/dev"
   tags:
     - image-bootstrap-mount-dev
-
-- include_tasks: disable_autostart.yml
-  when:
-    - 'image_disable_service_autostart | bool'
