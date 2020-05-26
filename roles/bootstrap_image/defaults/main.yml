@@ -29,7 +29,7 @@ image_bootstrap_include_packages:
   - dbus
   - openssh-server
   - python3-minimal
-  - python-apt
+  - python3-apt
   - sudo
   - nano
   - apt-transport-https
