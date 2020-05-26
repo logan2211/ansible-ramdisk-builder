@@ -2,4 +2,4 @@
 localhost ansible_connection=local ansible_become=True
 
 [liveboot_images]
-ubuntu2004 image_ubuntu_release=focal
+ubuntu2004 image_ubuntu_release=focal ansible_python_interpreter=python3
