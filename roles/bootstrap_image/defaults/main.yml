@@ -28,7 +28,6 @@ image_bootstrap_include_packages:
   - systemd
   - dbus
   - openssh-server
-  - python-minimal
   - python3-minimal
   - python-apt
   - sudo
