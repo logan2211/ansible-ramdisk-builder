@@ -1,4 +1,4 @@
-dist: xenial
+dist: bionic
 language: python
 sudo: required
 cache:
@@ -11,19 +11,22 @@ matrix:
   fast_finish: true
   include:
     - env:
-        TOXENV: functional_2.6
+        TOXENV: functional_2.8
         ansible_inventory: inventory_xenial
     - env:
-        TOXENV: functional_2.6
+        TOXENV: functional_2.8
+        ansible_inventory: inventory_bionic
+    - env:
+        TOXENV: functional_2.9
+        ansible_inventory: inventory_xenial
+    - env:
+        TOXENV: functional_2.9
         ansible_inventory: inventory_bionic
     - env:
         TOXENV: functional_stable
         ansible_inventory: inventory_xenial
     - env:
         TOXENV: functional_stable
-        ansible_inventory: inventory_bionic
-    - env:
-        TOXENV: functional_stable_py3
         ansible_inventory: inventory_bionic
     - env:
         TOXENV: linters
