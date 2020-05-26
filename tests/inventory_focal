@@ -1,0 +1,5 @@
+[all]
+localhost ansible_connection=local ansible_become=True
+
+[liveboot_images]
+ubuntu2004 image_ubuntu_release=focal
