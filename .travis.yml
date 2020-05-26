@@ -17,17 +17,26 @@ matrix:
         TOXENV: functional_2.8
         ansible_inventory: inventory_bionic
     - env:
+        TOXENV: functional_2.8
+        ansible_inventory: inventory_focal
+    - env:
         TOXENV: functional_2.9
         ansible_inventory: inventory_xenial
     - env:
         TOXENV: functional_2.9
         ansible_inventory: inventory_bionic
     - env:
+        TOXENV: functional_2.9
+        ansible_inventory: inventory_focal
+    - env:
         TOXENV: functional_stable
         ansible_inventory: inventory_xenial
     - env:
         TOXENV: functional_stable
         ansible_inventory: inventory_bionic
+    - env:
+        TOXENV: functional_stable
+        ansible_inventory: inventory_focal
     - env:
         TOXENV: linters
   allow_failures:
