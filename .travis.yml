@@ -6,45 +6,42 @@ cache:
   pip: true
 # cache: pip
 env:
-  - ANSIBLE_FORCE_COLOR=1
+  global:
+    - ANSIBLE_FORCE_COLOR=1
+    - TEST_SCRIPT=scripts/run_tests.sh
 matrix:
   fast_finish: true
   include:
     - env:
-        TOXENV: functional_2.8
-        ansible_inventory: inventory_xenial
+        ANSIBLE_PIP_PACKAGE: '''ansible>=2.8<2.9'''
+        TEST_INVENTORY: inventory_xenial
     - env:
-        TOXENV: functional_2.8
-        ansible_inventory: inventory_bionic
+        ANSIBLE_PIP_PACKAGE: '''ansible>=2.8<2.9'''
+        TEST_INVENTORY: inventory_bionic
     - env:
-        TOXENV: functional_2.8
-        ansible_inventory: inventory_focal
+        ANSIBLE_PIP_PACKAGE: '''ansible>=2.8<2.9'''
+        TEST_INVENTORY: inventory_focal
     - env:
-        TOXENV: functional_2.9
-        ansible_inventory: inventory_xenial
+        ANSIBLE_PIP_PACKAGE: '''ansible>=2.9<2.10'''
+        TEST_INVENTORY: inventory_xenial
     - env:
-        TOXENV: functional_2.9
-        ansible_inventory: inventory_bionic
+        ANSIBLE_PIP_PACKAGE: '''ansible>=2.9<2.10'''
+        TEST_INVENTORY: inventory_bionic
     - env:
-        TOXENV: functional_2.9
-        ansible_inventory: inventory_focal
+        ANSIBLE_PIP_PACKAGE: '''ansible>=2.9<2.10'''
+        TEST_INVENTORY: inventory_focal
     - env:
-        TOXENV: functional_stable
-        ansible_inventory: inventory_xenial
+        TEST_INVENTORY: inventory_xenial
     - env:
-        TOXENV: functional_stable
-        ansible_inventory: inventory_bionic
+        TEST_INVENTORY: inventory_bionic
     - env:
-        TOXENV: functional_stable
-        ansible_inventory: inventory_focal
+        TEST_INVENTORY: inventory_focal
     - env:
-        TOXENV: linters
+        TEST_SCRIPT: scripts/run_linters.sh
   allow_failures:
     - env:
-        TOXENV: linters
-install:
-  - sudo pip install tox
+        TEST_SCRIPT: scripts/run_linters.sh
 script:
-  - sudo tox
+  - sudo $TEST_SCRIPT
 notifications:
   email: false
