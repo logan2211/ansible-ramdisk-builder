@@ -33,7 +33,6 @@ image_kernel_packages:
   - "{{ image_linux_kernel | replace('linux-', 'linux-tools-') }}"
   - intel-microcode
   - initramfs-tools
-  - biosdevname
   # Used to support additional overlay filesystems
   - xfsprogs
   - btrfs-tools
