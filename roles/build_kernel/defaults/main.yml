@@ -35,7 +35,8 @@ image_kernel_packages:
   - initramfs-tools
   # Used to support additional overlay filesystems
   - xfsprogs
-  - btrfs-tools
+  - "{{ (ansible_distribution_version is version('20.04', '>=')) |
+        ternary('btrfs-progs', 'btrfs-tools') }}"
 
 image_intel_microcode_scancpu: no
 
