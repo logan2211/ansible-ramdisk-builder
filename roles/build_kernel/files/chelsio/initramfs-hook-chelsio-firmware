@@ -17,4 +17,6 @@ esac
 . /usr/share/initramfs-tools/hook-functions #provides copy_exec
 mkdir -p ${DESTDIR}/lib/firmware/cxgb4
 rm -f ${DESTDIR}/lib/firmware/cxgb4/t5-config.txt                         #copy_exec won't overwrite an existing file
-copy_exec /lib/firmware/cxgb4/t5-config.txt /lib/firmware/cxgb4/t5-config.txt #Takes location in filesystem and location in initramfs as arguments
+if [ -f /lib/firmware/cxgb4/t5-config.txt ]; then
+     copy_exec /lib/firmware/cxgb4/t5-config.txt /lib/firmware/cxgb4/t5-config.txt #Takes location in filesystem and location in initramfs as arguments
+fi
