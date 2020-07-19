@@ -38,3 +38,11 @@
   command: mount -o bind /dev "{{ image_dir }}/dev"
   tags:
     - image-bootstrap-mount-dev
+
+- name: Mount devpts in bootstrap
+  command: mount -o bind {{ item }} "{{ image_dir }}{{ item }}"
+  loop:
+    - /dev/pts
+    - /dev/console
+  tags:
+    - image-bootstrap-mount-devpts

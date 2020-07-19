@@ -23,6 +23,8 @@
   with_items:
     - "{{ image_dir }}/proc"
     - "{{ image_dir }}/sys"
+    - "{{ image_dir }}/dev/console"
+    - "{{ image_dir }}/dev/pts"
     - "{{ image_dir }}/dev"
   tags:
     - unmount-system
