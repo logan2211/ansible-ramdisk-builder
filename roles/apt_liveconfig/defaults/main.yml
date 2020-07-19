@@ -24,7 +24,7 @@ image_ubuntu_release: xenial
 
 image_apt_upgrade_type: dist
 
-image_ubuntu_apt_mirror: http://mirror.lstn.net/ubuntu
+image_ubuntu_apt_mirror: http://cache.mirror.lstn.net/ubuntu
 image_apt_system_repos:
   - url: "{{ image_ubuntu_apt_mirror }}"
     distribution: "{{ image_ubuntu_release }}-updates"
