@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- name: Copy kernel and initrd to packer directory
+- name: Copy kernel and initrd to packer directory (pre-20.04)
   local_action:
     module: copy
     src: "{{ item.src }}"
@@ -23,5 +23,22 @@
   with_items:
     - { src: "{{ image_dir }}/vmlinuz", dest: "{{ image_packer_output }}/{{ inventory_hostname | basename }}.vmlinuz" }
     - { src: "{{ image_dir }}/initrd.img", dest: "{{ image_packer_output }}/{{ inventory_hostname | basename }}.initrd.img" }
+  when:
+    - ansible_distribution_version is version('20.04', '<')
+  tags:
+    - image-packer-kernel-copy
+
+- name: Copy kernel and initrd to packer directory (20.04 and later)
+  local_action:
+    module: copy
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    follow: yes
+    mode: "0644"
+  with_items:
+    - { src: "{{ image_dir }}/boot/vmlinuz", dest: "{{ image_packer_output }}/{{ inventory_hostname | basename }}.vmlinuz" }
+    - { src: "{{ image_dir }}/boot/initrd.img", dest: "{{ image_packer_output }}/{{ inventory_hostname | basename }}.initrd.img" }
+  when:
+    - ansible_distribution_version is version('20.04', '>=')
   tags:
     - image-packer-kernel-copy
