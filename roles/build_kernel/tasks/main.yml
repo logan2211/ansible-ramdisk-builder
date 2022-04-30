@@ -27,7 +27,7 @@
 - include: install_packages.yml
 
 - name: Set kernel version
-  shell: ls -1 /lib/modules/ | grep '\-generic$'
+  ansible.builtin.shell: ls -1 /lib/modules/ | grep '\-generic$'
   register: _kernel_version
   tags:
     - kernel-fact

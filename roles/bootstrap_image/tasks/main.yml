@@ -14,7 +14,7 @@
 # limitations under the License.
 
 - name: Bootstrap image
-  command: debootstrap
+  ansible.builtin.command: debootstrap
     --arch="{{ image_ubuntu_arch }}"
     --variant="{{ image_debootstrap_variant }}"
     --components="{{ image_debootstrap_components | join(',') }}"
@@ -25,22 +25,22 @@
     - image-bootstrap-debootstrap
 
 - name: Mount proc in bootstrap
-  command: mount -t proc proc "{{ image_dir }}/proc"
+  ansible.builtin.command: mount -t proc proc "{{ image_dir }}/proc"
   tags:
     - image-bootstrap-mount-proc
 
 - name: Mount sys in bootstrap
-  command: mount -t sysfs sysfs "{{ image_dir }}/sys"
+  ansible.builtin.command: mount -t sysfs sysfs "{{ image_dir }}/sys"
   tags:
     - image-bootstrap-mount-sys
 
 - name: Mount dev in bootstrap
-  command: mount -o bind /dev "{{ image_dir }}/dev"
+  ansible.builtin.command: mount -o bind /dev "{{ image_dir }}/dev"
   tags:
     - image-bootstrap-mount-dev
 
 - name: Mount devpts in bootstrap
-  command: mount -o bind {{ item }} "{{ image_dir }}{{ item }}"
+  ansible.builtin.command: mount -o bind {{ item }} "{{ image_dir }}{{ item }}"
   loop:
     - /dev/pts
     - /dev/console

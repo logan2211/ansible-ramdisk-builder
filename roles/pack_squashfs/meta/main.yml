@@ -22,7 +22,7 @@ galaxy_info:
     - name: Ubuntu
       versions:
         - xenial
-  categories:
+  galaxy_tags:
     - squashfs
     - ramdisk
     - liveboot

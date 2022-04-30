@@ -14,12 +14,12 @@
 # limitations under the License.
 
 - name: Install kernel apt packages
-  apt:
-    update_cache: yes
+  ansible.builtin.apt:
+    update_cache: true
     cache_valid_time: 600
     name: "{{ item }}"
     state: present
-    install_recommends: no
+    install_recommends: false
   with_items: "{{ image_kernel_packages }}"
   tags:
     - image-kernel-packages

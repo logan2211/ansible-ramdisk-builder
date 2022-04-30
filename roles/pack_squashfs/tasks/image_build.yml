@@ -14,7 +14,7 @@
 # limitations under the License.
 
 - name: Build squashfs image
-  command: mksquashfs
+  ansible.builtin.command: mksquashfs
     "{{ image_dir }}"
     "{{ image_packer_output }}/{{ inventory_hostname | basename }}.squashfs"
     -comp "{{ image_packer_compression }}"

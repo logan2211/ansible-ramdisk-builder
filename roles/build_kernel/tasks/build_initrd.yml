@@ -14,7 +14,7 @@
 # limitations under the License.
 
 - name: Include all Intel microcode (disable cpu scan)
-  lineinfile:
+  ansible.builtin.lineinfile:
     dest: /etc/default/intel-microcode
     state: present
     regexp: "^#?IUCODE_TOOL_SCANCPUS=.*$"
@@ -25,7 +25,7 @@
     - image-intel-microcode
 
 - name: Set initrd compression
-  lineinfile:
+  ansible.builtin.lineinfile:
     dest: /etc/initramfs-tools/initramfs.conf
     state: present
     regexp: "^COMPRESS=.*$"
@@ -34,7 +34,7 @@
     - image-initrd-compression
 
 - name: Configure initrd kernel modules
-  lineinfile:
+  ansible.builtin.lineinfile:
     dest: /etc/initramfs-tools/modules
     state: present
     line: "{{ item }}"
@@ -43,7 +43,7 @@
     - image-initrd-kmod
 
 - name: Drop initramfs-tools hooks
-  copy:
+  ansible.builtin.copy:
     src: "{{ item.src }}"
     dest: "/etc/initramfs-tools/hooks/{{ item.name }}"
     owner: root
@@ -54,7 +54,7 @@
     - image-initrd-hooks
 
 - name: Drop initramfs scripts
-  copy:
+  ansible.builtin.copy:
     src: "{{ item.name }}"
     dest: "/etc/initramfs-tools/scripts/{{ item.dest | default(item.name) }}"
     owner: root
@@ -67,10 +67,12 @@
 # Workaround for initramfs-tools bug
 # https://bugs.launchpad.net/ubuntu/+source/initramfs-tools/+bug/1829805
 - name: Get linux versions
-  command: linux-version list
+  ansible.builtin.command: linux-version list
+  changed_when: false
   register: linux_versions
 
 - name: Build initrd image
-  command: "update-initramfs -c -k {{ linux_versions.stdout_lines[0] }}"
+  ansible.builtin.command: "update-initramfs -c -k {{ linux_versions.stdout_lines[0] }}"
+  changed_when: false
   tags:
     - image-initrd-update

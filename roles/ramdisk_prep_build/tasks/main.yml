@@ -15,12 +15,12 @@
 
 # Prepare the host to build images
 - name: Ensure root user
-  shell: test `id -u` -eq 0
+  ansible.builtin.shell: test `id -u` -eq 0
   run_once: true
 
 - name: Install image build packages
-  apt:
-    update_cache: yes
+  ansible.builtin.apt:
+    update_cache: true
     name: "{{ item }}"
     state: present
   with_items:
@@ -32,7 +32,7 @@
 
 # Reset the image build (delete old image, create build directory)
 - name: Ensure unmounted proc, dev, sys in bootstrap
-  command: umount "{{ item }}"
+  ansible.builtin.command: umount "{{ item }}"
   register: unmount
   failed_when: "'not found' not in unmount.stderr and
                 'not mounted' not in unmount.stderr and
@@ -49,14 +49,14 @@
     - unmount-system-pre
 
 - name: Delete stale image
-  file:
+  ansible.builtin.file:
     path: "{{ image_dir }}"
     state: absent
   tags:
     - image-delete-stale
 
 - name: Prep image directory
-  file:
+  ansible.builtin.file:
     path: "{{ image_dir }}"
     state: directory
     mode: 0755

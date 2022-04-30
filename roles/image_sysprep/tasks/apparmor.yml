@@ -14,9 +14,9 @@
 # limitations under the License.
 
 - name: Modify apparmor templates to add the attach_disconnected flag
-  lineinfile:
+  ansible.builtin.lineinfile:
     dest: "/etc/apparmor.d/{{ item.profile_name }}"
-    backrefs: yes
+    backrefs: true
     regexp: '^((?:profile)?\s*{{ item.exec_name }})\s*{\s*$'
     line: '\1 (attach_disconnected) {'
   with_items: "{{ image_apparmor_attach_disconnected }}"
