@@ -20,4 +20,4 @@ set -o pipefail
 bootstrap_system
 
 cd $PROJECT_PATH
-ansible-lint
+$ANSIBLE_VENV_PATH/bin/ansible-lint
