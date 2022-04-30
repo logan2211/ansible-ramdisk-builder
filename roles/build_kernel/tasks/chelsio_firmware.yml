@@ -14,13 +14,13 @@
 # limitations under the License.
 
 - name: Ensure Chelsio firmware directory exists
-  file:
+  ansible.builtin.file:
     path: "{{ item.dest | dirname }}"
     state: directory
   with_items: "{{ image_chelsio_firwmare_files }}"
 
 - name: Copy Chelsio firmware
-  copy:
+  ansible.builtin.copy:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
     owner: root
@@ -29,7 +29,7 @@
   with_items: "{{ image_chelsio_firwmare_files }}"
 
 - name: Drop Chelsio initramfs-tools hook
-  copy:
+  ansible.builtin.copy:
     src: "chelsio/initramfs-hook-chelsio-firmware"
     dest: "/etc/initramfs-tools/hooks/initramfs-hook-chelsio-firmware"
     owner: root

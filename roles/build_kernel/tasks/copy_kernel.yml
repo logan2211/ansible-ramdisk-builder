@@ -14,8 +14,7 @@
 # limitations under the License.
 
 - name: Copy kernel and initrd to packer directory (pre-20.04)
-  local_action:
-    module: copy
+  ansible.builtin.copy:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
     follow: yes
@@ -25,12 +24,12 @@
     - { src: "{{ image_dir }}/initrd.img", dest: "{{ image_packer_output }}/{{ inventory_hostname | basename }}.initrd.img" }
   when:
     - ansible_distribution_version is version('20.04', '<')
+  delegate_to: localhost
   tags:
     - image-packer-kernel-copy
 
 - name: Copy kernel and initrd to packer directory (20.04 and later)
-  local_action:
-    module: copy
+  ansible.builtin.copy:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
     follow: yes
@@ -40,5 +39,6 @@
     - { src: "{{ image_dir }}/boot/initrd.img", dest: "{{ image_packer_output }}/{{ inventory_hostname | basename }}.initrd.img" }
   when:
     - ansible_distribution_version is version('20.04', '>=')
+  delegate_to: localhost
   tags:
     - image-packer-kernel-copy

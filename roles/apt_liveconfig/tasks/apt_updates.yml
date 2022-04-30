@@ -14,7 +14,7 @@
 # limitations under the License.
 
 - name: Perform apt dist upgrade
-  apt:
-    update_cache: yes
+  ansible.builtin.apt:
+    update_cache: true
     cache_valid_time: "{{ apt_cache_timeout }}"
     upgrade: "{{ image_apt_upgrade_type }}"

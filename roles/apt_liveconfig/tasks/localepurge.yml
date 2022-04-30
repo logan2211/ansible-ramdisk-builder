@@ -14,7 +14,7 @@
 # limitations under the License.
 
 - name: Configure localepurge upon dpkg install
-  debconf:
+  ansible.builtin.debconf:
     name: localepurge
     question: localepurge/use-dpkg-feature
     value: true
@@ -23,7 +23,7 @@
     - localepurge-config
 
 - name: Configure localepurge no-purge locales
-  debconf:
+  ansible.builtin.debconf:
     name: localepurge
     question: localepurge/nopurge
     value: "{{ image_locales | map(attribute='name') | list | join(', ') }}"
@@ -32,13 +32,13 @@
     - localepurge-config
 
 - name: Install localepurge
-  apt:
+  ansible.builtin.apt:
     name: localepurge
   tags:
     - localepurge-install
 
 - name: Add selected locales to locale.gen
-  lineinfile:
+  ansible.builtin.lineinfile:
     dest: /etc/locale.gen
     line: "{{ item.name }} {{ item.encoding }}"
   with_items: "{{ image_locales }}"
@@ -46,6 +46,7 @@
     - locale-configuration
 
 - name: Compile system locales
-  command: locale-gen
+  ansible.builtin.command: locale-gen
+  changed_when: false
   tags:
     - locale-configuration

@@ -14,14 +14,14 @@
 # limitations under the License.
 
 - name: Stop preventing services from starting upon install
-  file:
+  ansible.builtin.file:
     path: /usr/sbin/policy-rc.d
     state: absent
   tags:
     - image-chroot-services-start
 
 - name: Remove fake initctl link to /bin/true
-  file:
+  ansible.builtin.file:
     path: "{{ item }}"
     state: absent
   with_items:
@@ -31,7 +31,7 @@
     - image-chroot-services-start
 
 - name: Move inictl back to its normal location
-  command: dpkg-divert --local --rename --remove {{ item }}
+  ansible.builtin.command: dpkg-divert --local --rename --remove {{ item }}
   changed_when: false
   with_items:
     - /sbin/initctl

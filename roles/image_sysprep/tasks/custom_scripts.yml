@@ -14,10 +14,10 @@
 # limitations under the License.
 
 - name: Add extra paths to environment
-  lineinfile:
+  ansible.builtin.lineinfile:
     dest: /etc/environment
     state: present
-    backrefs: yes
+    backrefs: true
     regexp: 'PATH=(["]*)((?!.*?{{ item }}).*?)(["]*)$'
     line: 'PATH=\1{{ item }}:\2\3'
   with_items: "{{ image_extra_environment_paths }}"
@@ -25,7 +25,7 @@
     - image-custom-environment
 
 - name: Set custom scripts to run on boot
-  lineinfile:
+  ansible.builtin.lineinfile:
     dest: /etc/rc.local
     line: "{{ item }}"
     insertbefore: '^exit 0'
@@ -35,7 +35,7 @@
     - image-custom-bootup-scripts
 
 - name: Create custom scripts bin directory
-  file:
+  ansible.builtin.file:
     path: "{{ image_custom_scripts_path }}/bin"
     state: directory
     owner: root
@@ -45,7 +45,7 @@
     - image-custom-bootup-copy
 
 - name: Copy custom scripts to image
-  copy:
+  ansible.builtin.copy:
     src: "{{ item }}"
     dest: "{{ image_custom_scripts_path }}/bin/{{ item | basename }}"
     owner: root
@@ -57,13 +57,13 @@
     - image-custom-bootup-copy
 
 - name: Set liveboot build fact
-  local_action:
-    module: command
+  ansible.builtin.command:
     args: "git -C {{ playbook_dir }} log -n1"
+  delegate_to: localhost
   register: liveboot_git_fact
 
 - name: Drop image build time
-  template:
+  ansible.builtin.template:
     src: "build_tag.j2"
     dest: "{{ image_custom_scripts_path }}/img_build"
     owner: root

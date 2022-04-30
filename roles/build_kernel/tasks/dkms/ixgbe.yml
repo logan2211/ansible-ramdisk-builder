@@ -14,7 +14,7 @@
 # limitations under the License.
 
 - name: Fetch ixgbe package
-  get_url:
+  ansible.builtin.get_url:
     url: "{{ image_ixgbe_url }}"
     dest: "/usr/src/{{ image_ixgbe_url | basename }}"
     sha256sum: "{{ image_ixgbe_sha256 }}"
@@ -23,16 +23,16 @@
     - dkms-ixgbe-download
 
 - name: Extract ixgbe package
-  unarchive:
+  ansible.builtin.unarchive:
     src: "/usr/src/{{ image_ixgbe_url | basename }}"
     dest: /usr/src
-    copy: no
+    copy: false
   tags:
     - dkms-ixgbe
     - dkms-ixgbe-extract
 
 - name: Build dkms configuration
-  copy:
+  ansible.builtin.copy:
     content: |
       PACKAGE_NAME="ixgbe"
       PACKAGE_VERSION="{{ image_ixgbe_version }}"
@@ -52,24 +52,24 @@
     - dkms-ixgbe-configure
 
 - name: Add ixgbe to dkms
-  command: dkms add -m ixgbe -v "{{ image_ixgbe_version }}"
+  ansible.builtin.command: dkms add -m ixgbe -v "{{ image_ixgbe_version }}"
   tags:
     - dkms-ixgbe
 
 - name: Build ixgbe dkms module
-  command: dkms build -k {{ kernel_version }} -m ixgbe -v "{{ image_ixgbe_version }}"
+  ansible.builtin.command: dkms build -k {{ kernel_version }} -m ixgbe -v "{{ image_ixgbe_version }}"
   tags:
     - dkms-ixgbe
     - dkms-ixgbe-build
 
 - name: Install ixgbe module
-  command: dkms install -k {{ kernel_version }} -m ixgbe -v "{{ image_ixgbe_version }}"
+  ansible.builtin.command: dkms install -k {{ kernel_version }} -m ixgbe -v "{{ image_ixgbe_version }}"
   tags:
     - dkms-ixgbe
     - dkms-ixgbe-install
 
 - name: Clean up ixgbe sources from image
-  file:
+  ansible.builtin.file:
     path: "{{ item }}"
     state: absent
   with_items:

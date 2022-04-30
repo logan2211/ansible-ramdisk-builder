@@ -46,9 +46,9 @@
         - name: Check the Zuul src dir for cloned roles
           stat:
             path: "{{ zuul_src_path }}/{{ item.src.split('/')[-3:] | join('/') }}"
-            get_attributes: no
-            get_checksum: no
-            get_mime: no
+            get_attributes: false
+            get_checksum: false
+            get_mime: false
           register: zuul_roles
           when:
             - item.scm == "git" or item.scm is undefined

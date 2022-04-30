@@ -18,7 +18,7 @@ image_disable_local_syslog: true
 image_ssh_keys: []
 image_users: []
 image_network_interfaces: []
-#usually not needed as initrd will handle this for us
+# usually not needed as initrd will handle this for us
 #  - name: bond0
 #    proto: inet
 #    type: dhcp
@@ -48,10 +48,10 @@ image_pam_limits:
     value: "{{ image_limits_fopen }}"
 
 image_kernel_options:
-  #ceph recs (url please)
+  # ceph recs (url please)
   - { key: "kernel.pid_max", value: "4194303" }
   - { key: "net.nf_conntrack_max", value: "4194304" }
-  #some settings for network interfaces
+  # some settings for network interfaces
   # Increase Linux autotuning TCP buffer limits
   # Set max to 16MB for 1GE and 32M (33554432) or 54M (56623104) for 10GE
   # Don't set tcp_mem itself! Let the kernel scale it based on RAM.
@@ -77,7 +77,7 @@ image_kernel_options:
   - { key: "net.ipv4.tcp_slow_start_after_idle", value: "0" }
   # If your servers talk UDP, also up these limits
   - { key: "net.ipv4.udp_rmem_min", value: "8192" }
-  #recommended when jumbo frames are enabled
+  # recommended when jumbo frames are enabled
   - { key: "net.ipv4.tcp_mtu_probing", value: "1" }
 
 image_custom_scripts_path: /opt/liveboot

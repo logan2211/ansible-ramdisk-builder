@@ -14,7 +14,7 @@
 # limitations under the License.
 
 - name: Write module options files
-  template:
+  ansible.builtin.template:
     src: module.conf.j2
     dest: "/etc/modprobe.d/{{ item.key }}.conf"
     owner: root

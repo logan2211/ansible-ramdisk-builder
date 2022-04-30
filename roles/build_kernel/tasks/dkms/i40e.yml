@@ -14,7 +14,7 @@
 # limitations under the License.
 
 - name: Fetch i40e package
-  get_url:
+  ansible.builtin.get_url:
     url: "{{ image_i40e_url }}"
     dest: "/usr/src/{{ image_i40e_url | basename }}"
     sha256sum: "{{ image_i40e_sha256 }}"
@@ -23,16 +23,16 @@
     - dkms-i40e-download
 
 - name: Extract i40e package
-  unarchive:
+  ansible.builtin.unarchive:
     src: "/usr/src/{{ image_i40e_url | basename }}"
     dest: /usr/src
-    copy: no
+    copy: false
   tags:
     - dkms-i40e
     - dkms-i40e-extract
 
 - name: Build dkms configuration
-  copy:
+  ansible.builtin.copy:
     content: |
       PACKAGE_NAME="i40e"
       PACKAGE_VERSION="{{ image_i40e_version }}"
@@ -52,24 +52,24 @@
     - dkms-i40e-configure
 
 - name: Add i40e to dkms
-  command: dkms add -m i40e -v "{{ image_i40e_version }}"
+  ansible.builtin.command: dkms add -m i40e -v "{{ image_i40e_version }}"
   tags:
     - dkms-i40e
 
 - name: Build i40e dkms module
-  command: dkms build -k {{ kernel_version }} -m i40e -v "{{ image_i40e_version }}"
+  ansible.builtin.command: dkms build -k {{ kernel_version }} -m i40e -v "{{ image_i40e_version }}"
   tags:
     - dkms-i40e
     - dkms-i40e-build
 
 - name: Install i40e module
-  command: dkms install -k {{ kernel_version }} -m i40e -v "{{ image_i40e_version }}"
+  ansible.builtin.command: dkms install -k {{ kernel_version }} -m i40e -v "{{ image_i40e_version }}"
   tags:
     - dkms-i40e
     - dkms-i40e-install
 
 - name: Clean up i40e sources from image
-  file:
+  ansible.builtin.file:
     path: "{{ item }}"
     state: absent
   with_items:

@@ -20,8 +20,8 @@
   gather_facts: no
   tasks:
     - name: Check the image build output directory
-      command: "ls -lha {{ image_packer_output }}"
+      ansible.builtin.command: "ls -lha {{ image_packer_output }}"
       delegate_to: localhost
       register: image_dir_list
-    - debug:
+    - ansible.builtin.debug:
         msg: "{{ image_dir_list.stdout }}"

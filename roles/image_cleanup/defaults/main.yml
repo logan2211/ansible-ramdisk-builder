@@ -18,6 +18,6 @@ image_cleanup_kernel_packages:
   - 'linux-headers-*'
   - 'linux-firmware'
   - 'intel-microcode'
-# - 'linux-image-*' #major space savings but needs more testing.
+# - 'linux-image-*' # major space savings but needs more testing.
 
-image_disable_service_autostart: yes
+image_disable_service_autostart: true

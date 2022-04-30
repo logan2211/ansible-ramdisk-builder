@@ -40,4 +40,3 @@ image_bootstrap_exclude_packages:
 
 image_bootstrap_include_user_packages: []
 image_bootstrap_exclude_user_packages: []
-

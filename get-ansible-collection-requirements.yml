@@ -15,7 +15,7 @@
 
 - name: Clone the role ansible-role-requirements
   hosts: localhost
-  gather_facts: no
+  gather_facts: false
   tasks:
     - name: Install collection requirements
       command: >-

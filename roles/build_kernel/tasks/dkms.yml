@@ -14,8 +14,8 @@
 # limitations under the License.
 
 - name: Install dkms
-  apt:
-    update_cache: yes
+  ansible.builtin.apt:
+    update_cache: true
     cache_valid_time: 300
     name: dkms
   tags:
@@ -29,10 +29,10 @@
     - dkms-build
 
 - name: Clean up dkms/ixgbe
-  apt:
+  ansible.builtin.apt:
     name: "{{ item }}"
     state: absent
-    purge: yes
+    purge: true
   with_items:
     - dkms
     - make

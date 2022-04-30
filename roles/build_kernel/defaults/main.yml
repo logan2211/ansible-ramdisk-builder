@@ -16,7 +16,7 @@
 image_dir: "{{ ansible_host }}"
 image_initrd_compression: xz
 
-#allow user to define additional modules
+# allow user to define additional modules
 image_initrd_kernel_modules: []
 image_initrd_kernel_modules_extra: []
 
@@ -38,7 +38,7 @@ image_kernel_packages:
   - "{{ (ansible_distribution_version is version('20.04', '>=')) |
         ternary('btrfs-progs', 'btrfs-tools') }}"
 
-image_intel_microcode_scancpu: no
+image_intel_microcode_scancpu: false
 
 image_initramfs_hooks:
   - name: liveboot-conf
@@ -60,7 +60,7 @@ dkms_builds: []
 #  - module: ixgbe
 #  - module: i40e
 
-#build ixgbe/i40e kernel module from dkms (needed sometimes for newer hardware)
+# build ixgbe/i40e kernel module from dkms (needed sometimes for newer hardware)
 image_ixgbe_version: 5.3.6
 image_ixgbe_sha256: 6ba26de1bb9b55b92f5f54c6c7b25f837323ec3322a6ee54e882c8e54e6d0eaa
 image_ixgbe_url: "http://downloads.sourceforge.net/project/e1000/ixgbe%20stable/{{ image_ixgbe_version }}/ixgbe-{{ image_ixgbe_version }}.tar.gz"

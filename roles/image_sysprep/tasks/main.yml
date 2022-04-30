@@ -14,14 +14,14 @@
 # limitations under the License.
 
 - name: Set image timezone
-  copy:
+  ansible.builtin.copy:
     content: "{{ image_timezone }}"
     dest: /etc/timezone
   tags:
     - image-prep-timezone
 
 - name: Drop fstab in image
-  template:
+  ansible.builtin.template:
     src: fstab.j2
     dest: /etc/fstab
     owner: root
@@ -32,7 +32,7 @@
     - image-fstab
 
 - name: Ensure mount targets exist as directories
-  file:
+  ansible.builtin.file:
     path: "{{ item.dest }}"
     state: directory
     owner: root
@@ -43,7 +43,7 @@
     - image-fstab
 
 - name: Create SSH directory for root
-  file:
+  ansible.builtin.file:
     path: '/root/.ssh'
     state: directory
     owner: root
@@ -54,7 +54,7 @@
     - image-ssh-keys
 
 - name: Create authorized_keys for root
-  template:
+  ansible.builtin.template:
     src: authorized_keys.j2
     dest: /root/.ssh/authorized_keys
     owner: root
@@ -65,7 +65,7 @@
     - image-ssh-keys
 
 - name: Set up interfaces file
-  template:
+  ansible.builtin.template:
     src: interface.conf.j2
     dest: "/etc/network/interfaces.d/{{ item.name }}"
     owner: root
@@ -76,7 +76,7 @@
     - image-prep-network
 
 - name: Disable boot delays due to network init
-  replace:
+  ansible.builtin.replace:
     dest: /etc/init/failsafe.conf
     regexp: 'sleep'
     replace: '#sleep'
@@ -96,7 +96,7 @@
 #    - image-pam-limits
 
 - name: Set limits.conf
-  lineinfile:
+  ansible.builtin.lineinfile:
     dest: /etc/security/limits.conf
     state: present
     line: "{{ item.domain }}\t{{ item.limit_type }}\t{{ item.limit_item }}\t{{ item.value }}"
@@ -105,12 +105,12 @@
     - image-pam-limits
 
 - name: Configure sysctl settings
-  sysctl:
+  ansible.builtin.sysctl:
     name: "{{ item.key }}"
     value: "{{ item.value }}"
     state: present
-    reload: no
-    sysctl_set: no
+    reload: false
+    sysctl_set: false
   with_items: "{{ image_kernel_options }}"
   tags:
     - image-sysctl
@@ -118,11 +118,11 @@
 - name: Disable syslog logging to disk
   block:
     - name: Ensure rsyslog config dir
-      file:
+      ansible.builtin.file:
         path: /etc/rsyslog.d
         state: directory
     - name: Drop rsyslog disable config
-      template:
+      ansible.builtin.template:
         src: "rsyslog-disable.conf.j2"
         dest: "/etc/rsyslog.d/49-disable-logging.conf"
         owner: root
@@ -133,7 +133,7 @@
     - image-syslog-disable
 
 - name: Set manual start services
-  copy:
+  ansible.builtin.copy:
     content: "manual\n"
     dest: "/etc/init/{{ item }}.override"
     owner: root
@@ -144,14 +144,14 @@
     - image-services-manual
 
 - name: Enable systemd services
-  systemd:
+  ansible.builtin.systemd:
     name: "{{ item }}"
-    enabled: yes
+    enabled: true
   with_items:
     - systemd-networkd
 
 - name: Set up system users
-  user:
+  ansible.builtin.user:
     name: "{{ item.username }}"
     append: "{{ item.append | default(omit) }}"
     group: "{{ item.group | default(omit) }}"
@@ -170,19 +170,19 @@
   include_role:
     name: systemd_service
   vars:
-    systemd_service_restart_changed: no
+    systemd_service_restart_changed: false
     systemd_services:
       - service_name: ramdisk_bootup
-        systemd_Restart: no
+        systemd_Restart: false
         execstarts: "{{ image_bootup_scripts }}"
         config_overrides:
           Service:
-            RemainAfterExit: yes
+            RemainAfterExit: true
   tags:
     - image-custom
 
 - name: Check if apparmor is installed in the image
-  command: dpkg -l apparmor
+  ansible.builtin.command: dpkg -l apparmor
   register: apparmor_installed
   failed_when: false
 
