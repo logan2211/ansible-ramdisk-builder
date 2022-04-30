@@ -64,7 +64,13 @@
   tags:
     - image-initrd-scripts
 
+# Workaround for initramfs-tools bug
+# https://bugs.launchpad.net/ubuntu/+source/initramfs-tools/+bug/1829805
+- name: Get linux versions
+  command: linux-version list
+  register: linux_versions
+
 - name: Build initrd image
-  command: update-initramfs -u
+  command: "update-initramfs -c -k {{ linux_versions.stdout_lines[0] }}"
   tags:
     - image-initrd-update
