@@ -3,7 +3,3 @@
   src: https://git.openstack.org/openstack/ansible-role-systemd_service
   scm: git
   version: master
-- name: config_template
-  src: https://git.openstack.org/openstack/ansible-config_template
-  scm: git
-  version: master

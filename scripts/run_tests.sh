@@ -27,10 +27,15 @@ fi
 
 bootstrap_system
 
+source $ANSIBLE_VENV_PATH/bin/activate
+
 cd $PROJECT_PATH
 run_ansible get-ansible-role-requirements.yml
+run_ansible get-ansible-collection-requirements.yml
 
 # Use the cloned roles
 export ANSIBLE_ROLES_PATH="${PROJECT_PATH}/roles:${PROJECT_PATH}/ephemeral_roles"
+# Use project's collections
+export ANSIBLE_COLLECTIONS_PATHS="${PROJECT_PATH}/collections"
 
 run_ansible tests/test.yml

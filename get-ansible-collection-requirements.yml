@@ -1,5 +1,5 @@
 ---
-# Copyright 2018, Logan Vig <logan2211@gmail.com>
+# Copyright 2021, Logan Vig <logan2211@gmail.com>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,16 +13,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-galaxy_info:
-  author: Logan V.
-  description: Prepare bootstrapped image
-  license: Apache2
-  min_ansible_version: 2.3
-  platforms:
-    - name: Ubuntu
-      versions:
-        - xenial
-  categories:
-    - squashfs
-    - ramdisk
-    - liveboot
+- name: Clone the role ansible-role-requirements
+  hosts: localhost
+  gather_facts: no
+  tasks:
+    - name: Install collection requirements
+      command: >-
+        ansible-galaxy collection install
+        --requirements-file {{ required_collections | quote }}
+        --collections-path {{ collections_path | quote }}
+  vars:
+    required_collections: "{{ playbook_dir }}/ansible-collection-requirements.yml"
+    collections_path: "{{ playbook_dir }}/collections"
