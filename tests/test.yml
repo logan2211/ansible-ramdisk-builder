@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- include: ../build-images.yml
+- import_playbook: ../build-images.yml
 
 - name: Test the image build result
   hosts: liveboot_images
