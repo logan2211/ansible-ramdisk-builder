@@ -17,7 +17,7 @@ galaxy_info:
   author: Logan V.
   description: Configure apt for liveboot environment
   license: Apache2
-  min_ansible_version: 2.2
+  min_ansible_version: '2.2'
   platforms:
     - name: Ubuntu
       versions:

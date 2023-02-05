@@ -17,7 +17,7 @@
   ansible.builtin.get_url:
     url: "{{ image_i40e_url }}"
     dest: "/usr/src/{{ image_i40e_url | basename }}"
-    sha256sum: "{{ image_i40e_sha256 }}"
+    checksum: "{{ image_i40e_checksum }}"
   tags:
     - dkms-i40e
     - dkms-i40e-download
@@ -53,17 +53,20 @@
 
 - name: Add i40e to dkms
   ansible.builtin.command: dkms add -m i40e -v "{{ image_i40e_version }}"
+  changed_when: false
   tags:
     - dkms-i40e
 
 - name: Build i40e dkms module
   ansible.builtin.command: dkms build -k {{ kernel_version }} -m i40e -v "{{ image_i40e_version }}"
+  changed_when: false
   tags:
     - dkms-i40e
     - dkms-i40e-build
 
 - name: Install i40e module
   ansible.builtin.command: dkms install -k {{ kernel_version }} -m i40e -v "{{ image_i40e_version }}"
+  changed_when: false
   tags:
     - dkms-i40e
     - dkms-i40e-install

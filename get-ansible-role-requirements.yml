@@ -19,11 +19,11 @@
   user: root
   tasks:
     - name: End the play if no role dependencies are defined
-      meta: end_play
+      ansible.builtin.meta: end_play
       when:
         - required_roles is none or required_roles == ''
     - name: Remove target directory if required
-      shell: |
+      ansible.builtin.shell: |
         if [[ ! -d "{{ item.path | default(role_path_default) }}/{{ item.name | default(item.src | basename) }}/.git" ]]; then
           rm -rf "{{ item.path | default(role_path_default) }}/{{ item.name | default(item.src | basename) }}"
         fi
@@ -34,17 +34,19 @@
       with_items: "{{ required_roles }}"
 
     - name: Ensure the default roles directory exists
-      file:
+      ansible.builtin.file:
         path: "{{ role_path_default }}"
         state: directory
 
     - name: Use Zuul provided sources in Zuul environment
+      when:
+        - "lookup('env', 'ZUUL_SRC_PATH') != ''"
       block:
         - name: Set Zuul sources path
-          set_fact:
+          ansible.builtin.set_fact:
             zuul_src_path: "{{ lookup('env', 'ZUUL_SRC_PATH') }}"
         - name: Check the Zuul src dir for cloned roles
-          stat:
+          ansible.builtin.stat:
             path: "{{ zuul_src_path }}/{{ item.src.split('/')[-3:] | join('/') }}"
             get_attributes: false
             get_checksum: false
@@ -54,7 +56,7 @@
             - item.scm == "git" or item.scm is undefined
           with_items: "{{ required_roles }}"
         - name: Link the Zuul provided roles
-          file:
+          ansible.builtin.file:
             src: "{{ zuul_src_path }}/{{ item.item.src.split('/')[-3:] | join('/') }}"
             dest: "{{ item.item.path | default(role_path_default) }}/{{ item.item.name | default(item.item.src | basename) }}"
             state: link
@@ -63,11 +65,9 @@
           with_items: "{{ zuul_roles.results
                           | selectattr('stat.exists')
                           | list }}"
-      when:
-        - "lookup('env', 'ZUUL_SRC_PATH') != ''"
 
     - name: Clone git repos (with git)
-      git:
+      ansible.builtin.git:
         repo: "{{ item.src }}"
         dest: "{{ item.path | default(role_path_default) }}/{{ item.name | default(item.src | basename) }}"
         version: "{{ item.version | default('master') }}"

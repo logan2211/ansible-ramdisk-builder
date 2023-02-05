@@ -23,15 +23,15 @@
       - pack_squashfs
   tasks:
     - name: Include the finalize roles
-      include_role:
+      ansible.builtin.include_role:
         name: "{{ role_item }}"
       with_items: "{{ image_build_finalize_roles | default(_image_build_finalize_roles) }}"
       loop_control:
         loop_var: role_item
-    - action:
-        module: setup
+    - name: Gather facts
+      ansible.builtin.setup: {}
     - name: Include the packaging roles
-      include_role:
+      ansible.builtin.include_role:
         name: "{{ role_item }}"
       with_items: "{{ image_build_package_roles | default(_image_build_package_roles) }}"
       loop_control:

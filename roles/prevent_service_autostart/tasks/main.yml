@@ -13,6 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- include_tasks: disable_autostart.yml
+- name: Include disable autostart
+  ansible.builtin.include_tasks: disable_autostart.yml
   when:
     - 'image_disable_service_autostart | bool'

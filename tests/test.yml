@@ -17,7 +17,7 @@
 
 - name: Test the image build result
   hosts: liveboot_images
-  gather_facts: no
+  gather_facts: false
   tasks:
     - name: Check the image build output directory
       ansible.builtin.command: "ls -lha {{ image_packer_output }}"

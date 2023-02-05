@@ -16,6 +16,7 @@
 # Prepare the host to build images
 - name: Ensure root user
   ansible.builtin.shell: test `id -u` -eq 0
+  changed_when: false
   run_once: true
 
 - name: Install image build packages

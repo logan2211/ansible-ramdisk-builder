@@ -21,14 +21,14 @@
   tags:
     - image-cleanup-packages
 
-- name: Check if packages need to be autoremoved
+- name: Check if packages need to be autoremoved  # noqa: command-instead-of-module
   ansible.builtin.command: apt-get --dry-run autoremove
   register: check_autoremove
   changed_when: false
   tags:
     - image-cleanup-apt
 
-- name: Autoremove unused packages
+- name: Autoremove unused packages  # noqa: command-instead-of-module
   ansible.builtin.command: apt-get -y autoremove
   when: "'packages will be REMOVED' in check_autoremove.stdout"
   tags:
@@ -61,6 +61,7 @@
   tags:
     - image-cleanup-files
 
-- include_tasks: enable_autostart.yml
+- name: Include enable autostart
+  ansible.builtin.include_tasks: enable_autostart.yml
   when:
     - 'image_disable_service_autostart | bool'

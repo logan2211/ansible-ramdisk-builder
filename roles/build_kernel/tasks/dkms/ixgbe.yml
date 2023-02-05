@@ -17,7 +17,7 @@
   ansible.builtin.get_url:
     url: "{{ image_ixgbe_url }}"
     dest: "/usr/src/{{ image_ixgbe_url | basename }}"
-    sha256sum: "{{ image_ixgbe_sha256 }}"
+    checksum: "{{ image_ixgbe_checksum }}"
   tags:
     - dkms-ixgbe
     - dkms-ixgbe-download
@@ -53,17 +53,20 @@
 
 - name: Add ixgbe to dkms
   ansible.builtin.command: dkms add -m ixgbe -v "{{ image_ixgbe_version }}"
+  changed_when: false
   tags:
     - dkms-ixgbe
 
 - name: Build ixgbe dkms module
   ansible.builtin.command: dkms build -k {{ kernel_version }} -m ixgbe -v "{{ image_ixgbe_version }}"
+  changed_when: false
   tags:
     - dkms-ixgbe
     - dkms-ixgbe-build
 
 - name: Install ixgbe module
   ansible.builtin.command: dkms install -k {{ kernel_version }} -m ixgbe -v "{{ image_ixgbe_version }}"
+  changed_when: false
   tags:
     - dkms-ixgbe
     - dkms-ixgbe-install

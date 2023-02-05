@@ -26,17 +26,17 @@
       - image_sysprep
   tasks:
     - name: Include the bootstrap roles
-      include_role:
+      ansible.builtin.include_role:
         name: "{{ role_item }}"
       with_items: "{{ image_build_bootstrap_roles | default(_image_build_bootstrap_roles) }}"
       loop_control:
         loop_var: role_item
       vars:
         ansible_connection: local
-    - action:
-        module: setup
+    - name: Gather facts
+      ansible.builtin.setup: {}
     - name: Include the prep roles
-      include_role:
+      ansible.builtin.include_role:
         name: "{{ role_item }}"
       with_items: "{{ image_build_prep_roles | default(_image_build_prep_roles) }}"
       loop_control:

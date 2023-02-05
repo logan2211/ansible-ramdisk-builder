@@ -17,7 +17,7 @@
   ansible.builtin.copy:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
-    follow: yes
+    follow: true
     mode: "0644"
   with_items:
     - { src: "{{ image_dir }}/vmlinuz", dest: "{{ image_packer_output }}/{{ inventory_hostname | basename }}.vmlinuz" }
@@ -32,7 +32,7 @@
   ansible.builtin.copy:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
-    follow: yes
+    follow: true
     mode: "0644"
   with_items:
     - { src: "{{ image_dir }}/boot/vmlinuz", dest: "{{ image_packer_output }}/{{ inventory_hostname | basename }}.vmlinuz" }

@@ -22,5 +22,6 @@
     -noappend -always-use-fragments
     -ef "{{ image_packer_excludes }}"
     -wildcards
+  changed_when: false
   tags:
     - image-packer-build
