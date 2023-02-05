@@ -80,32 +80,32 @@
     dest: /etc/init/failsafe.conf
     regexp: 'sleep'
     replace: '#sleep'
-  when: "{{ ansible_distribution_release == 'trusty' }}"
+  when: "ansible_distribution_release == 'trusty'"
   tags:
     - image-prep-init
 
-#TODO: uncomment this for ansible2 and remove limits.conf template
-#- name: Set fopen limits
-#  pam_limits:
-#    domain: "{{ item.domain }}"
-#    limit_type: "{{ item.limit_type }}"
-#    limit_item: "{{ item.limit_item }}"
-#    value: "{{ item.value }}"
-#  with_items: image_pam_limits
-#  tags:
-#    - image-pam-limits
+# TODO: uncomment this for ansible2 and remove limits.conf template
+# - name: Set fopen limits
+#   pam_limits:
+#     domain: "{{ item.domain }}"
+#     limit_type: "{{ item.limit_type }}"
+#     limit_item: "{{ item.limit_item }}"
+#     value: "{{ item.value }}"
+#   with_items: image_pam_limits
+#   tags:
+#     - image-pam-limits
 
 - name: Set limits.conf
   ansible.builtin.lineinfile:
     dest: /etc/security/limits.conf
     state: present
-    line: "{{ item.domain }}\t{{ item.limit_type }}\t{{ item.limit_item }}\t{{ item.value }}"
+    line: "{{ item.domain }}\t{{ item.limit_type }}\t{{ item.limit_item }}\t{{ item.value }}"  # noqa: no-tabs
   with_items: "{{ image_pam_limits }}"
   tags:
     - image-pam-limits
 
 - name: Configure sysctl settings
-  ansible.builtin.sysctl:
+  ansible.posix.sysctl:
     name: "{{ item.key }}"
     value: "{{ item.value }}"
     state: present
@@ -116,6 +116,7 @@
     - image-sysctl
 
 - name: Disable syslog logging to disk
+  when: image_disable_local_syslog | bool
   block:
     - name: Ensure rsyslog config dir
       ansible.builtin.file:
@@ -128,7 +129,6 @@
         owner: root
         group: root
         mode: "0644"
-  when: image_disable_local_syslog | bool
   tags:
     - image-syslog-disable
 
@@ -167,7 +167,7 @@
     - image-users-setup
 
 - name: Configure custom scripts bootup service unit
-  include_role:
+  ansible.builtin.include_role:
     name: systemd_service
   vars:
     systemd_service_restart_changed: false
@@ -185,8 +185,10 @@
   ansible.builtin.command: dpkg -l apparmor
   register: apparmor_installed
   failed_when: false
+  changed_when: false
 
-- include: apparmor.yml
-  when: "{{ apparmor_installed.rc == 0 }}"
+- name: Import apparmor
+  ansible.builtin.import_tasks: apparmor.yml
+  when: 'apparmor_installed.rc == 0'
   tags:
     - image-apparmor

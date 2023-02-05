@@ -14,7 +14,7 @@
 # limitations under the License.
 
 - name: Gather variables for each operating system
-  include_vars: "{{ item }}"
+  ansible.builtin.include_vars: "{{ item }}"
   with_first_found:
     - "{{ ansible_distribution | lower }}-{{ ansible_distribution_version | lower }}.yml"
     - "{{ ansible_distribution | lower }}-{{ ansible_distribution_major_version | lower }}.yml"
@@ -24,24 +24,31 @@
   tags:
     - always
 
-- include: install_packages.yml
+- name: Import install packages
+  ansible.builtin.import_tasks: install_packages.yml
 
 - name: Set kernel version
-  ansible.builtin.shell: ls -1 /lib/modules/ | grep '\-generic$'
+  ansible.builtin.shell: ls -1 /lib/modules/ | grep '\-generic$'  # noqa: risky-shell-pipe
+  changed_when: false
   register: _kernel_version
   tags:
     - kernel-fact
 
 - name: Set kernel version fact
-  set_fact:
+  ansible.builtin.set_fact:
     kernel_version: "{{ _kernel_version.stdout }}"
   tags:
     - kernel-fact
 
-- include: dkms.yml
+- name: Import dkms
+  ansible.builtin.import_tasks: dkms.yml
   when: 'dkms_builds | length > 0'
-- include: chelsio_firmware.yml
+- name: Import Chelsio firmware
+  ansible.builtin.import_tasks: chelsio_firmware.yml
   when: image_chelsio_firmware | bool
-- include: configure_modules.yml
-- include: build_initrd.yml
-- include: copy_kernel.yml
+- name: Import configure modules
+  ansible.builtin.import_tasks: configure_modules.yml
+- name: Import build initrd
+  ansible.builtin.import_tasks: build_initrd.yml
+- name: Import copy kernel
+  ansible.builtin.import_tasks: copy_kernel.yml

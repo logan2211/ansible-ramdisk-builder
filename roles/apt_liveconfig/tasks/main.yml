@@ -13,17 +13,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- include: apt_configure.yml
+- name: Import apt configuration
+  ansible.builtin.import_tasks: apt_configure.yml
   when:
     - "'configure' in image_apt_taskset"
   tags:
     - apt-configuration
-- include: localepurge.yml
+- name: Import localepurge
+  ansible.builtin.import_tasks: localepurge.yml
   when:
     - "'localepurge' in image_apt_taskset"
   tags:
     - apt-localepurge
-- include: apt_updates.yml
+- name: Import apt updates
+  ansible.builtin.import_tasks: apt_updates.yml
   when:
     - "'upgrade' in image_apt_taskset"
   tags:

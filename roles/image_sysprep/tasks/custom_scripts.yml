@@ -59,6 +59,7 @@
 - name: Set liveboot build fact
   ansible.builtin.command:
     args: "git -C {{ playbook_dir }} log -n1"
+  changed_when: false
   delegate_to: localhost
   register: liveboot_git_fact
 

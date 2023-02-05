@@ -62,11 +62,11 @@ dkms_builds: []
 
 # build ixgbe/i40e kernel module from dkms (needed sometimes for newer hardware)
 image_ixgbe_version: 5.3.6
-image_ixgbe_sha256: 6ba26de1bb9b55b92f5f54c6c7b25f837323ec3322a6ee54e882c8e54e6d0eaa
+image_ixgbe_checksum: 'sha256:6ba26de1bb9b55b92f5f54c6c7b25f837323ec3322a6ee54e882c8e54e6d0eaa'
 image_ixgbe_url: "http://downloads.sourceforge.net/project/e1000/ixgbe%20stable/{{ image_ixgbe_version }}/ixgbe-{{ image_ixgbe_version }}.tar.gz"
 
 image_i40e_version: 2.4.3
-image_i40e_sha256: 5596ed536dc8195fc86e03f998a4e613281736b8e4f97edb0212316e19e18e79
+image_i40e_checksum: 'sha256:5596ed536dc8195fc86e03f998a4e613281736b8e4f97edb0212316e19e18e79'
 image_i40e_url: "http://downloads.sourceforge.net/project/e1000/i40e%20stable/{{ image_i40e_version }}/i40e-{{ image_i40e_version }}.tar.gz"
 
 image_chelsio_firmware: true

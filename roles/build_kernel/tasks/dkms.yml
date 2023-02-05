@@ -21,7 +21,8 @@
   tags:
     - dkms
 
-- include: dkms/{{ item.module }}.yml
+- name: Import dkms
+  ansible.builtin.include_tasks: dkms/{{ item.module }}.yml
   when: item.enabled | default('yes') | bool
   with_items: "{{ dkms_builds }}"
   tags:
