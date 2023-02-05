@@ -28,9 +28,9 @@ jobs:
       fail-fast: false
       matrix:
         name:
-          - ubuntu-xenial
           - ubuntu-bionic
           - ubuntu-focal
+          - ubuntu-jammy
         ansible_version:
           # Ansible latest
           - ansible
