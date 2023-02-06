@@ -15,6 +15,7 @@
 
 - name: Clone the role ansible-role-requirements
   hosts: localhost
+  gather_facts: false
   connection: local
   user: root
   tasks:
