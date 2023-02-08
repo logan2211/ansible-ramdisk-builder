@@ -16,6 +16,8 @@
 - name: Begin image build process
   hosts: "{{ liveboot_images_group | default('liveboot_images') }}"
   gather_facts: false
+  collections:
+    - openstack.config_template
   vars:
     _image_build_bootstrap_roles:
       - ramdisk_prep_build
