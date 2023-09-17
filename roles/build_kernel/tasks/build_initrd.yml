@@ -13,6 +13,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# dhclient is required if the initrd will be using dhcp to obtain an IP in order
+# to download the squashfs root
+- name: Ensure dhclient is installed
+  ansible.builtin.apt:
+    name: isc-dhcp-client
+    state: present
+    install_recommends: false
+
 - name: Include all Intel microcode (disable cpu scan)
   ansible.builtin.lineinfile:
     dest: /etc/default/intel-microcode
