@@ -17,7 +17,7 @@
   ansible.builtin.debconf:
     name: localepurge
     question: localepurge/use-dpkg-feature
-    value: true
+    value: 'true'
     vtype: select
   tags:
     - localepurge-config
