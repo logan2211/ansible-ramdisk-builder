@@ -21,10 +21,11 @@
   tasks:
     - name: Install collection requirements
       ansible.builtin.command: >-
-        ansible-galaxy collection install
+        {{ ansible_galaxy_path | quote }} collection install
         --requirements-file {{ required_collections | quote }}
         --collections-path {{ collections_path | quote }}
       changed_when: false
   vars:
+    ansible_galaxy_path: ansible-galaxy
     required_collections: "{{ playbook_dir }}/ansible-collection-requirements.yml"
     collections_path: "{{ playbook_dir }}/collections"
