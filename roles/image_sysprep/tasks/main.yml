@@ -60,7 +60,8 @@
     owner: root
     group: root
     mode: "0644"
-  when: image_ssh_keys
+  when:
+    - 'image_ssh_keys | count > 0'
   tags:
     - image-ssh-keys
 
