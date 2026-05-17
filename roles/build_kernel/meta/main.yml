@@ -21,7 +21,7 @@ galaxy_info:
   platforms:
     - name: Ubuntu
       versions:
-        - xenial
+        - jammy
   galaxy_tags:
     - squashfs
     - ramdisk

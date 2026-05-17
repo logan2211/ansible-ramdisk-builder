@@ -20,7 +20,7 @@ image_apt_taskset:
 
 apt_cache_timeout: 600
 
-image_ubuntu_release: xenial
+image_ubuntu_release: jammy
 
 image_apt_upgrade_type: dist
 
