@@ -15,7 +15,7 @@
 
 image_dir: "{{ ansible_host }}"
 image_ubuntu_apt_mirror: http://cache.mirror.lstn.net/ubuntu
-image_ubuntu_release: xenial
+image_ubuntu_release: jammy
 image_ubuntu_arch: amd64
 image_debootstrap_variant: minbase
 image_debootstrap_components:

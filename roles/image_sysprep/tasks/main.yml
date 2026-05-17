@@ -78,14 +78,6 @@
   tags:
     - image-prep-network
 
-- name: Disable boot delays due to network init
-  ansible.builtin.replace:
-    dest: /etc/init/failsafe.conf
-    regexp: 'sleep'
-    replace: '#sleep'
-  when: "ansible_distribution_release == 'trusty'"
-  tags:
-    - image-prep-init
 
 # TODO: uncomment this for ansible2 and remove limits.conf template
 # - name: Set fopen limits
