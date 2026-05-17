@@ -18,6 +18,7 @@
     url: "{{ image_ixgbe_url }}"
     dest: "/usr/src/{{ image_ixgbe_url | basename }}"
     checksum: "{{ image_ixgbe_checksum }}"
+    mode: '0644'
   tags:
     - dkms-ixgbe
     - dkms-ixgbe-download
