@@ -1,0 +1,12 @@
+[Unit]
+Description=Ramdisk bootup scripts
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+{% for script in image_bootup_scripts %}
+ExecStart={{ script }}
+{% endfor %}
+
+[Install]
+WantedBy=multi-user.target
