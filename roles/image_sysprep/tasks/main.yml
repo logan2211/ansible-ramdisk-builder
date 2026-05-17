@@ -170,18 +170,20 @@
   tags:
     - image-users-setup
 
-- name: Configure custom scripts bootup service unit
-  ansible.builtin.include_role:
-    name: systemd_service
-  vars:
-    systemd_service_restart_changed: false
-    systemd_services:
-      - service_name: ramdisk_bootup
-        systemd_Restart: false
-        execstarts: "{{ image_bootup_scripts }}"
-        config_overrides:
-          Service:
-            RemainAfterExit: true
+- name: Install ramdisk bootup service unit
+  ansible.builtin.template:
+    src: ramdisk_bootup.service.j2
+    dest: /etc/systemd/system/ramdisk_bootup.service
+    owner: root
+    group: root
+    mode: "0644"
+  tags:
+    - image-custom
+
+- name: Enable ramdisk bootup service
+  ansible.builtin.systemd:
+    name: ramdisk_bootup
+    enabled: true
   tags:
     - image-custom
 
