@@ -17,6 +17,7 @@
   ansible.builtin.copy:
     content: "{{ image_timezone }}"
     dest: /etc/timezone
+    mode: "0644"
   tags:
     - image-prep-timezone
 
@@ -119,11 +120,14 @@
 
 - name: Disable syslog logging to disk
   when: image_disable_local_syslog | bool
+  tags:
+    - image-syslog-disable
   block:
     - name: Ensure rsyslog config dir
       ansible.builtin.file:
         path: /etc/rsyslog.d
         state: directory
+        mode: "0755"
     - name: Drop rsyslog disable config
       ansible.builtin.template:
         src: "rsyslog-disable.conf.j2"
@@ -131,8 +135,6 @@
         owner: root
         group: root
         mode: "0644"
-  tags:
-    - image-syslog-disable
 
 - name: Set manual start services
   ansible.builtin.copy:

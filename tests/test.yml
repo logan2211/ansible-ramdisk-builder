@@ -13,7 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- import_playbook: ../build-images.yml
+- name: Build images
+  import_playbook: ../build-images.yml
 
 - name: Test the image build result
   hosts: liveboot_images
@@ -23,5 +24,7 @@
       ansible.builtin.command: "ls -lha {{ image_packer_output }}"
       delegate_to: localhost
       register: image_dir_list
-    - ansible.builtin.debug:
+      changed_when: false
+    - name: Output image dir list
+      ansible.builtin.debug:
         msg: "{{ image_dir_list.stdout }}"

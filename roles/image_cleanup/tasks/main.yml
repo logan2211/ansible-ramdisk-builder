@@ -30,6 +30,7 @@
 
 - name: Autoremove unused packages  # noqa: command-instead-of-module
   ansible.builtin.command: apt-get -y autoremove
+  changed_when: true
   when: "'packages will be REMOVED' in check_autoremove.stdout"
   tags:
     - image-cleanup-apt

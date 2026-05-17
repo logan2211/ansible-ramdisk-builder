@@ -18,6 +18,7 @@
     url: "{{ image_i40e_url }}"
     dest: "/usr/src/{{ image_i40e_url | basename }}"
     checksum: "{{ image_i40e_checksum }}"
+    mode: '0644'
   tags:
     - dkms-i40e
     - dkms-i40e-download
