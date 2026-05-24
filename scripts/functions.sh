@@ -23,9 +23,9 @@ export ANSIBLE_PARAMETERS=${ANSIBLE_PARAMETERS:-""}
 
 function bootstrap_system {
     sudo apt-get update
-    install_deb_packages install python3-pip
-    sudo pip3 install virtualenv
-    virtualenv -p "${ANSIBLE_VENV_PYTHON}" "${ANSIBLE_VENV_PATH}"
+    install_deb_packages install python3-pip python3-venv
+    rm -rf "${ANSIBLE_VENV_PATH}"
+    "${ANSIBLE_VENV_PYTHON}" -m venv "${ANSIBLE_VENV_PATH}"
     ${ANSIBLE_VENV_PATH}/bin/pip install -r${PROJECT_PATH}/test-requirements.txt ${ANSIBLE_PIP_PACKAGE}
 }
 
