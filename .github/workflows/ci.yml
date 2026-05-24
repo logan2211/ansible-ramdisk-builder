@@ -32,11 +32,11 @@ jobs:
           - ubuntu-resolute
         ansible_version:
           # Ansible latest
-          - ansible
+          - ansible-core
     env:
       ANSIBLE_FORCE_COLOR: 1
       TEST_INVENTORY: 'inventory_${{ matrix.name }}'
-      ansible_version: ${{ matrix.ansible_version }}
+      ANSIBLE_VERSION: ${{ matrix.ansible_version }}
     steps:
       - uses: actions/checkout@v2
       - name: Run tests

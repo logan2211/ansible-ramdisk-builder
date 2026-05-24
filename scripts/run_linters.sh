@@ -19,5 +19,12 @@ set -o pipefail
 . $(dirname $(readlink -f "$0"))/functions.sh
 bootstrap_system
 
+source $ANSIBLE_VENV_PATH/bin/activate
+
 cd $PROJECT_PATH
+run_ansible get-ansible-collection-requirements.yml
+
+# Use project's collections
+export ANSIBLE_COLLECTIONS_PATH="${PROJECT_PATH}/collections"
+
 $ANSIBLE_VENV_PATH/bin/ansible-lint

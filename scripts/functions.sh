@@ -17,7 +17,7 @@ export PROJECT_PATH=$(dirname "$SCRIPT_PATH")
 export TESTS_PATH=${PROJECT_PATH}/tests
 export ANSIBLE_VENV_PATH=${ANSIBLE_VENV_PATH:-"$PROJECT_PATH/runtime"}
 export ANSIBLE_VENV_PYTHON=${ANSIBLE_VENV_PYTHON:-'python3'}
-export ANSIBLE_PIP_PACKAGE=${ANSIBLE_VERSION:-'ansible'}
+export ANSIBLE_PIP_PACKAGE=${ANSIBLE_VERSION:-'ansible-core'}
 export FORKS=${FORKS:-$(grep -c ^processor /proc/cpuinfo)}
 export ANSIBLE_PARAMETERS=${ANSIBLE_PARAMETERS:-""}
 

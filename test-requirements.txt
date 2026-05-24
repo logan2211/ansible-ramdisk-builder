@@ -3,7 +3,7 @@
 # process, which may cause wedges in the gate later.
 bashate>=0.2 # Apache-2.0
 flake8<2.6.0,>=2.5.4 # MIT
-ansible
+ansible-core
 ansible-lint
 
 #required for ansible ipaddr filter
