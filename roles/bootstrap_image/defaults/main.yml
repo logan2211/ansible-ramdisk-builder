@@ -33,6 +33,7 @@ image_bootstrap_include_packages:
   - sudo
   - nano
   - apt-transport-https
+  - gpg
   - plymouth-disabler
 
 image_bootstrap_exclude_packages:
