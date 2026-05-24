@@ -1,2 +1,4 @@
 ---
-collections: []
+collections:
+  - name: ansible.posix
+  - name: community.general
