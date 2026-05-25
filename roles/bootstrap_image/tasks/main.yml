@@ -14,11 +14,16 @@
 # limitations under the License.
 
 - name: Bootstrap image
-  ansible.builtin.command: debootstrap
+  ansible.builtin.command: >-
+    debootstrap
     --arch="{{ image_ubuntu_arch }}"
     --variant="{{ image_debootstrap_variant }}"
     --components="{{ image_debootstrap_components | join(',') }}"
-    --include="{{ (image_bootstrap_include_packages + image_bootstrap_include_user_packages) | join(',') }}"
+    --include="{{ (
+      image_bootstrap_include_packages
+      + [image_systemd_resolved_package]
+      + image_bootstrap_include_user_packages
+    ) | reject('equalto', '') | join(',') }}"
     --exclude="{{ (image_bootstrap_exclude_packages + image_bootstrap_exclude_user_packages) | join(',') }}"
     "{{ image_ubuntu_release }}" "{{ image_dir }}" "{{ image_ubuntu_apt_mirror }}"
   changed_when: false
