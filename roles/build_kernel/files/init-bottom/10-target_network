@@ -21,45 +21,16 @@ esac
 
 for x in $cmdline; do
 	case $x in
-	dhcpints=*)
-		dhcpints="${x#dhcpints=}"
-		;;
 	dummyints=*)
 		dummyints="${x#dummyints=}"
 		;;
 	esac
 done
 
-#if the initrd set up any network interfaces, let's add them to the system network configuration.
-for i in /run/net-*.conf; do
-	base_file=$(basename "$i")
-	#remove net-
-	base_file=${base_file#*net-}
-	#remove .conf extension
-	ifname=${base_file%.*}
-
-	cat >> /root/etc/systemd/network/"$ifname".network << EOF
-[Match]
-Name=${ifname}
-[Network]
-DHCP=ipv4
-[DHCP]
-ClientIdentifier=mac
-EOF
-done
-
-#add additional dhcp interfaces from "dhcpints" command line option
-IFS=","
-for ifname in $dhcpints; do
-  cat >> /root/etc/systemd/network/"$ifname".network << EOF
-[Match]
-Name=${ifname}
-[Network]
-DHCP=ipv4
-[DHCP]
-ClientIdentifier=mac
-EOF
-done
+# DHCP configuration for the boot NIC (and any other ethernet) is shipped
+# in the base image as /etc/systemd/network/10-dhcp.network (see the
+# image_sysprep role). Per-NIC files used to be generated here from
+# /run/net-*.conf and the `dhcpints=` cmdline arg; both are now redundant.
 
 #set up dummy interfaces.
 #this is defined on the cmdline like:

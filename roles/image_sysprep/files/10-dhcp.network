@@ -1,0 +1,16 @@
+# Default DHCP config for any ethernet NIC in the liveboot image.
+#
+# Filename intentionally sorts before `70-BOOTIF.network` and any other
+# `70-*.network` that systemd-network-generator emits from kernel cmdline
+# (BOOTIF=, ip=dhcp, etc.). networkd assigns each link to exactly one
+# .network file by lexical order, so anything `>= "70-"` is shadowed.
+# Keep this file's name `10-*` so it always wins.
+
+[Match]
+Name=en* eth*
+
+[Network]
+DHCP=ipv4
+
+[DHCP]
+ClientIdentifier=mac

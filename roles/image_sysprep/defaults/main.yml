@@ -18,6 +18,12 @@ image_disable_local_syslog: true
 image_ssh_keys: []
 image_users: []
 image_network_interfaces: []
+# Ship /etc/systemd/network/10-dhcp.network to enable DHCPv4 on any ethernet
+# NIC (Name=en* eth*). The initramfs no longer writes per-NIC .network files,
+# so this is required for the live image to acquire a DHCP lease on any
+# supported Ubuntu release. Set false if the image will manage its own
+# networking some other way.
+image_sysprep_dhcp_all_interfaces: true
 # usually not needed as initrd will handle this for us
 #  - name: bond0
 #    proto: inet
