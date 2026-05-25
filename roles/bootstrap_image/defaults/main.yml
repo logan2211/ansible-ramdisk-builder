@@ -32,7 +32,6 @@ image_bootstrap_include_packages:
   - python3-apt
   - sudo
   - nano
-  - apt-transport-https
   - gpg
   - plymouth-disabler
 
