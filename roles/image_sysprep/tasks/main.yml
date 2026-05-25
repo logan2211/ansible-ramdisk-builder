@@ -139,6 +139,17 @@
   tags:
     - image-services-manual
 
+- name: Ship default DHCP network config
+  ansible.builtin.copy:
+    src: 10-dhcp.network
+    dest: /etc/systemd/network/10-dhcp.network
+    owner: root
+    group: root
+    mode: "0644"
+  when: image_sysprep_dhcp_all_interfaces | bool
+  tags:
+    - image-prep-network
+
 - name: Enable systemd services
   ansible.builtin.systemd:
     name: "{{ item }}"
