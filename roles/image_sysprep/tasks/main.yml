@@ -156,6 +156,7 @@
     enabled: true
   with_items:
     - systemd-networkd
+    - systemd-resolved
 
 - name: Set up system users
   ansible.builtin.user:

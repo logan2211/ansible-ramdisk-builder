@@ -36,6 +36,17 @@ image_bootstrap_include_packages:
   - gpg
   - plymouth-disabler
 
+# Jammy and older ship resolved in the systemd package. Noble and newer
+# split it into systemd-resolved, so bootstrap that package when needed.
+image_systemd_resolved_bundled_releases:
+  - bionic
+  - focal
+  - jammy
+image_systemd_resolved_package: >-
+  {{ ''
+     if image_ubuntu_release in image_systemd_resolved_bundled_releases
+     else 'systemd-resolved' }}
+
 image_bootstrap_exclude_packages:
   - aptitude
 
